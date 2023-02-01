@@ -4,6 +4,9 @@
 #include <stdbool.h>
 #include <math.h>
 
+#include "config.h"
+#include "rooms.h"
+
 #define UINT32SIZE 4294967296
 #define KEY_W 119
 #define KEY_A 97
@@ -12,38 +15,9 @@
 
 
 //config
-//window
-#define win_w 1024
-#define win_h 1024
-
-#define room_w 16
-#define room_h 16
-
-#define tile_count 2
 
 static bool keys[UINT32SIZE];
  
-int room1[room_w][room_h] = {
-{1,1,1,1, 1,1,0,0, 0,0,1,1, 1,1,1,1},
-{1,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,1},
-{1,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,1},
-{1,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,1},
-
-{1,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,1},
-{1,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,1},
-{0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0},
-{0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0},
-
-{0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0},
-{0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0},
-{1,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,1},
-{1,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,1},
-
-{1,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,1},
-{1,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,1},
-{1,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,1},
-{1,1,1,1, 1,1,0,0, 0,0,1,1, 1,1,1,1}};
-
 int main(int argc, char *argv[])
 {
 
@@ -118,14 +92,14 @@ int main(int argc, char *argv[])
 		if (keys[KEY_A]){pos.x-=speed;Alien = Alien_l;}
 		
 		//boundary
-		if (pos.x + pos.w > 1000)
-			pos.x = 1000 - pos.w;
+		if (pos.x + pos.w > win_w)
+			pos.x = 1;
 		if (pos.x < 0)
-			pos.x = 0;
-		if (pos.y + pos.h > 1000)
-			pos.y = 1000 - pos.h;
+			pos.x = win_w-pos.w-1;
+		if (pos.y + pos.h > win_h)
+			pos.y = 1;
 		if (pos.y < 0)
-			pos.y = 0;
+			pos.y = win_h-pos.h-1;
 
 		// clears the screen
 		SDL_RenderClear(rend);
@@ -134,7 +108,6 @@ int main(int argc, char *argv[])
 		SDL_Rect bgtilepos = {0,0,64,64};
 		for(bgtilepos.x = 0;bgtilepos.x<win_w;bgtilepos.x+=bgtilepos.w){
 			for(bgtilepos.y = 0;bgtilepos.y<win_h;bgtilepos.y+=bgtilepos.h){
-				printf("%d %d:\n",bgtilepos.x,bgtilepos.y);
 				SDL_RenderCopy(rend, tile_array[room1[bgtilepos.x/bgtilepos.w][bgtilepos.y/bgtilepos.h]], NULL, &bgtilepos);
 			}
 		}
