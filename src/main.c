@@ -66,7 +66,8 @@ int main(int argc, char *argv[])
 	bool loop = true;
 	while (loop) {
 		SDL_Event event;
-
+		
+		///MOVE
 		//events
 		const Uint8 *keyboard_state_array = SDL_GetKeyboardState(NULL);
 		while (SDL_PollEvent(&event)) {
@@ -83,46 +84,63 @@ int main(int argc, char *argv[])
 				break;
 			default:
 				break;
+			}
 		}
-
+		printf("%d %d\n",pos.x,pos.y);
+		if (keys[KEY_W]&&
+			room_array[map[ry][rx]].data[(pos.y-speed)/Tile_H][pos.x/Tile_W]!=1&&
+			room_array[map[ry][rx]].data[(pos.y-speed)/Tile_H][(pos.x+pos.w)/Tile_W]!=1){
+				pos.y-=speed;Alien = Alien_h;
 		}
-		if (keys[KEY_W]){pos.y-=speed;Alien = Alien_h;}
-		if (keys[KEY_S]){pos.y+=speed;Alien = Alien_f;}
-		if (keys[KEY_D]){pos.x+=speed;Alien = Alien_r;}
-		if (keys[KEY_A]){pos.x-=speed;Alien = Alien_l;}
+		if (keys[KEY_S]&&((
+			room_array[map[ry][rx]].data[(pos.y+pos.h+speed)/Tile_H][pos.x/Tile_W]			!=1&&
+			room_array[map[ry][rx]].data[(pos.y+pos.h+speed)/Tile_H][(pos.x+pos.w)/Tile_W]	!=1)||rx>room_h-2)){
+				pos.y+=speed;Alien = Alien_f;
+		}
 		
-		//boundary
-		if (pos.x + pos.w > win_w){
+		if (keys[KEY_D]&&((
+			room_array[map[ry][rx]].data[(pos.y)/Tile_H]		[(pos.x+pos.w+speed)/Tile_W]!=1&&
+			room_array[map[ry][rx]].data[(pos.y+pos.h)/Tile_H]	[(pos.x+pos.w+speed)/Tile_W]!=1)||rx>room_w-2)){
+				pos.x+=speed;Alien = Alien_r;
+		}
+		if (keys[KEY_A]&&
+			room_array[map[ry][rx]].data[(pos.y)/Tile_H]		[(pos.x-speed)/Tile_W]!=1&&
+			room_array[map[ry][rx]].data[(pos.y+pos.h)/Tile_H]	[(pos.x-speed)/Tile_W]!=1){
+				pos.x-=speed;Alien = Alien_l;
+		}
+		
+		//window border
+		if (pos.x-speed > win_w){
 			pos.x = 1;
 			rx+=1;
 		}
-		if (pos.x < 0){
+		if (pos.x+speed < -pos.w-1){
 			pos.x = win_w-pos.w-1;
 			rx-=1;
 		}
-		if (pos.y + pos.h > win_h){
+		if (pos.y-speed > win_h){
 			pos.y = 1;
 			ry+=1;
 		}
-		if (pos.y < 0){
+		if (pos.y+speed < -pos.h-1){
 			pos.y = win_h-pos.h-1;
 			ry-=1;
 		}
+		
+		
+		//touch
+		
+		
+		///DRAW
 		// clears the screen
 		SDL_RenderClear(rend);
 		
 		//draw background
 		
-		SDL_Rect bgtilepos = {0,0,64,64};
+		SDL_Rect bgtilepos = {0,0,Tile_W,Tile_H};
 		for(bgtilepos.x = 0;bgtilepos.x<win_w;bgtilepos.x+=bgtilepos.w){
 			for(bgtilepos.y = 0;bgtilepos.y<win_h;bgtilepos.y+=bgtilepos.h){
-				
-				//int Vroom_number = map[rx][ry];
-				//room Vroom = //Vroom_number];
-				
-				int tile_number = room_array[map[ry][rx]].data[(int)(bgtilepos.y/bgtilepos.h)][(int)(bgtilepos.x/bgtilepos.w)];
-				
-				SDL_RenderCopy(rend, tile_array[tile_number], NULL, &bgtilepos);
+				SDL_RenderCopy(rend, tile_array[room_array[map[ry][rx]].data[(int)(bgtilepos.y/bgtilepos.h)][(int)(bgtilepos.x/bgtilepos.w)]], NULL, &bgtilepos);
 			}
 		}
 		
