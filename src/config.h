@@ -7,8 +7,7 @@
 #define room_w 16
 #define room_h 16
 
-
 //map
-#define room_count 1
-#define map_w 2
-#define map_h 2
+#define room_count 9
+#define map_w 3
+#define map_h 3

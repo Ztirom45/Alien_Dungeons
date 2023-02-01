@@ -92,25 +92,40 @@ int main(int argc, char *argv[])
 		if (keys[KEY_A]){pos.x-=speed;Alien = Alien_l;}
 		
 		//boundary
-		if (pos.x + pos.w > win_w)
+		if (pos.x + pos.w > win_w){
 			pos.x = 1;
-		if (pos.x < 0)
+			rx+=1;
+		}
+		if (pos.x < 0){
 			pos.x = win_w-pos.w-1;
-		if (pos.y + pos.h > win_h)
+			rx-=1;
+		}
+		if (pos.y + pos.h > win_h){
 			pos.y = 1;
-		if (pos.y < 0)
+			ry+=1;
+		}
+		if (pos.y < 0){
 			pos.y = win_h-pos.h-1;
-
+			ry-=1;
+		}
 		// clears the screen
 		SDL_RenderClear(rend);
 		
 		//draw background
+		
 		SDL_Rect bgtilepos = {0,0,64,64};
 		for(bgtilepos.x = 0;bgtilepos.x<win_w;bgtilepos.x+=bgtilepos.w){
 			for(bgtilepos.y = 0;bgtilepos.y<win_h;bgtilepos.y+=bgtilepos.h){
-				SDL_RenderCopy(rend, tile_array[room1[bgtilepos.x/bgtilepos.w][bgtilepos.y/bgtilepos.h]], NULL, &bgtilepos);
+				
+				//int Vroom_number = map[rx][ry];
+				//room Vroom = //Vroom_number];
+				
+				int tile_number = room_array[map[ry][rx]].data[(int)(bgtilepos.y/bgtilepos.h)][(int)(bgtilepos.x/bgtilepos.w)];
+				
+				SDL_RenderCopy(rend, tile_array[tile_number], NULL, &bgtilepos);
 			}
 		}
+		
 		
 		//draw player
 		SDL_RenderCopy(rend, Alien, NULL, &pos);
