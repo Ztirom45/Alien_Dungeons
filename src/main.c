@@ -86,7 +86,6 @@ int main(int argc, char *argv[])
 				break;
 			}
 		}
-		printf("%d %d\n",pos.x,pos.y);
 		if (keys[KEY_W]&&
 			room_array[map[ry][rx]].data[(pos.y-speed)/Tile_H][pos.x/Tile_W]!=1&&
 			room_array[map[ry][rx]].data[(pos.y-speed)/Tile_H][(pos.x+pos.w)/Tile_W]!=1){
@@ -94,13 +93,15 @@ int main(int argc, char *argv[])
 		}
 		if (keys[KEY_S]&&((
 			room_array[map[ry][rx]].data[(pos.y+pos.h+speed)/Tile_H][pos.x/Tile_W]			!=1&&
-			room_array[map[ry][rx]].data[(pos.y+pos.h+speed)/Tile_H][(pos.x+pos.w)/Tile_W]	!=1)||rx>room_h-2)){
+			room_array[map[ry][rx]].data[(pos.y+pos.h+speed)/Tile_H][(pos.x+pos.w)/Tile_W]	!=1)
+			||(float)(pos.y+pos.h+speed)/Tile_H>16.0)){
 				pos.y+=speed;Alien = Alien_f;
 		}
 		
 		if (keys[KEY_D]&&((
-			room_array[map[ry][rx]].data[(pos.y)/Tile_H]		[(pos.x+pos.w+speed)/Tile_W]!=1&&
-			room_array[map[ry][rx]].data[(pos.y+pos.h)/Tile_H]	[(pos.x+pos.w+speed)/Tile_W]!=1)||rx>room_w-2)){
+			room_array[map[ry][rx]].data[(pos.y)		/Tile_H][(pos.x+pos.w+speed)/Tile_W]!=1&&
+			room_array[map[ry][rx]].data[(pos.y+pos.h)	/Tile_H][(pos.x+pos.w+speed)/Tile_W]!=1)
+			||((float)(pos.x+pos.w+speed)/Tile_W)>16.0)){
 				pos.x+=speed;Alien = Alien_r;
 		}
 		if (keys[KEY_A]&&
@@ -110,20 +111,20 @@ int main(int argc, char *argv[])
 		}
 		
 		//window border
-		if (pos.x-speed > win_w){
-			pos.x = 1;
+		if (pos.x > win_w){
+			pos.x = 1-pos.w;
 			rx+=1;
 		}
-		if (pos.x+speed < -pos.w-1){
-			pos.x = win_w-pos.w-1;
+		if (pos.x < 1-pos.w){
+			pos.x = win_w-1;
 			rx-=1;
 		}
-		if (pos.y-speed > win_h){
-			pos.y = 1;
+		if (pos.y > win_h){
+			pos.y = 1-pos.w;
 			ry+=1;
 		}
-		if (pos.y+speed < -pos.h-1){
-			pos.y = win_h-pos.h-1;
+		if (pos.y < 1-pos.w){
+			pos.y = win_h-1;
 			ry-=1;
 		}
 		
