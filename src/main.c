@@ -87,26 +87,26 @@ int main(int argc, char *argv[])
 			}
 		}
 		if (keys[KEY_W]&&
-			room_array[map[ry][rx]].data[(pos.y-speed)/Tile_H][pos.x/Tile_W]!=1&&
-			room_array[map[ry][rx]].data[(pos.y-speed)/Tile_H][(pos.x+pos.w)/Tile_W]!=1){
+			room_array[map[ry][rx]].data[(pos.y-speed)/Tile_H][pos.x/Tile_W]==0&&
+			room_array[map[ry][rx]].data[(pos.y-speed)/Tile_H][(pos.x+pos.w)/Tile_W]==0){
 				pos.y-=speed;Alien = Alien_h;
 		}
 		if (keys[KEY_S]&&((
-			room_array[map[ry][rx]].data[(pos.y+pos.h+speed)/Tile_H][pos.x/Tile_W]			!=1&&
-			room_array[map[ry][rx]].data[(pos.y+pos.h+speed)/Tile_H][(pos.x+pos.w)/Tile_W]	!=1)
+			room_array[map[ry][rx]].data[(pos.y+pos.h+speed)/Tile_H][pos.x/Tile_W]			==0&&
+			room_array[map[ry][rx]].data[(pos.y+pos.h+speed)/Tile_H][(pos.x+pos.w)/Tile_W]	==0)
 			||(float)(pos.y+pos.h+speed)/Tile_H>16.0)){
 				pos.y+=speed;Alien = Alien_f;
 		}
 		
 		if (keys[KEY_D]&&((
-			room_array[map[ry][rx]].data[(pos.y)		/Tile_H][(pos.x+pos.w+speed)/Tile_W]!=1&&
-			room_array[map[ry][rx]].data[(pos.y+pos.h)	/Tile_H][(pos.x+pos.w+speed)/Tile_W]!=1)
+			room_array[map[ry][rx]].data[(pos.y)		/Tile_H][(pos.x+pos.w+speed)/Tile_W]==0&&
+			room_array[map[ry][rx]].data[(pos.y+pos.h)	/Tile_H][(pos.x+pos.w+speed)/Tile_W]==0)
 			||((float)(pos.x+pos.w+speed)/Tile_W)>16.0)){
 				pos.x+=speed;Alien = Alien_r;
 		}
 		if (keys[KEY_A]&&
-			room_array[map[ry][rx]].data[(pos.y)/Tile_H]		[(pos.x-speed)/Tile_W]!=1&&
-			room_array[map[ry][rx]].data[(pos.y+pos.h)/Tile_H]	[(pos.x-speed)/Tile_W]!=1){
+			room_array[map[ry][rx]].data[(pos.y)/Tile_H]		[(pos.x-speed)/Tile_W]==0&&
+			room_array[map[ry][rx]].data[(pos.y+pos.h)/Tile_H]	[(pos.x-speed)/Tile_W]==0){
 				pos.x-=speed;Alien = Alien_l;
 		}
 		
