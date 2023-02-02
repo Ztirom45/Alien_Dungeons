@@ -9,7 +9,7 @@
 
 
 //room
-#define tile_count 2
+#define tile_count 3
 #define room_w 16
 #define room_h 16
 

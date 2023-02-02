@@ -36,15 +36,18 @@ int main(int argc, char *argv[])
 	SDL_Surface* surface_l	= IMG_Load("images/Alien_l.png");
 	SDL_Surface* surface4 	= IMG_Load("images/tile1.png");
 	SDL_Surface* surface5 	= IMG_Load("images/tile2.png");
-	
+	SDL_Surface* surface6 	= IMG_Load("images/chest.png");
+		
 	SDL_Texture* Alien_f	= SDL_CreateTextureFromSurface(rend, surface_f);
 	SDL_Texture* Alien_h	= SDL_CreateTextureFromSurface(rend, surface_h);
 	SDL_Texture* Alien_r	= SDL_CreateTextureFromSurface(rend, surface_r);
 	SDL_Texture* Alien_l	= SDL_CreateTextureFromSurface(rend, surface_l);
 	SDL_Texture* Alien 		= Alien_f;
+	
 	SDL_Texture* bgtile1	= SDL_CreateTextureFromSurface(rend, surface4);
 	SDL_Texture* bgtile2	= SDL_CreateTextureFromSurface(rend, surface5);
-	SDL_Texture* tile_array[tile_count] = {bgtile1,bgtile2};
+	SDL_Texture* bgtile_chest	= SDL_CreateTextureFromSurface(rend, surface6);
+	SDL_Texture* tile_array[tile_count] = {bgtile1,bgtile2,bgtile_chest};
 	
 	SDL_FreeSurface(surface_f);
 	SDL_FreeSurface(surface_h);
@@ -52,12 +55,13 @@ int main(int argc, char *argv[])
 	SDL_FreeSurface(surface_l);
 	SDL_FreeSurface(surface4);
 	SDL_FreeSurface(surface5);
+	SDL_FreeSurface(surface6);
 
 	//player conect pos with image
 	SDL_Rect pos;
 	SDL_QueryTexture(Alien_f, NULL, NULL, &pos.w, &pos.h);
-	pos.w *= 4;
-	pos.h *= 4;
+	pos.w *= 3;
+	pos.h *= 3;
 	pos.x = (1000 - pos.w) / 2;
 	pos.y = (1000 - pos.h) / 2;
 	int speed = 5;
@@ -163,6 +167,8 @@ int main(int argc, char *argv[])
 	SDL_DestroyTexture(Alien_h);
 	SDL_DestroyTexture(Alien);
 	SDL_DestroyTexture(bgtile1);
+	SDL_DestroyTexture(bgtile2);
+	SDL_DestroyTexture(bgtile_chest);
 	SDL_DestroyRenderer(rend);
 	SDL_DestroyWindow(win);
 	 
