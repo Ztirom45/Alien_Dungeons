@@ -60,8 +60,8 @@ int main(int argc, char *argv[])
 	//player conect pos with image
 	SDL_Rect pos;
 	SDL_QueryTexture(Alien_f, NULL, NULL, &pos.w, &pos.h);
-	pos.w *= 3;
-	pos.h *= 3;
+	pos.w *= 4;
+	pos.h *= 4;
 	pos.x = (1000 - pos.w) / 2;
 	pos.y = (1000 - pos.h) / 2;
 	int speed = 5;
