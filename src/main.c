@@ -30,6 +30,53 @@ int main(int argc, char *argv[])
 	SDL_Renderer* rend = SDL_CreateRenderer(win, -1, render_flags);
 
 	//load image
+	
+	/*
+	SDL_RenderCopyEx(pRenderer, m_textureMap[id],
+			&srcRect, &destRect, 0, 0, flip);
+			SDL_RenderCopyEx(pRenderer, m_textureMap[id],
+	
+	
+	int SDL_RenderCopyEx(SDL_Renderer * renderer,
+                   SDL_Texture * texture,
+                   const SDL_Rect * srcrect,
+                   const SDL_Rect * dstrect,
+                   const double angle,
+                   const SDL_Point *center,
+                   const SDL_RendererFlip flip);
+	*/
+		//load alien texture array
+	SDL_Surface* Alien_Surface	= IMG_Load("images/Alien.png");
+	SDL_Texture* Alien_Texture	= SDL_CreateTextureFromSurface(rend,Alien_Surface);
+	
+	SDL_Rect Alien_Texture_Pos;
+	SDL_QueryTexture(Alien_Texture, NULL, NULL, &Alien_Texture_Pos.w, &Alien_Texture_Pos.h);
+	Alien_Texture_Pos.w *= ScaleFactor;
+	Alien_Texture_Pos.h *= ScaleFactor;
+	
+	SDL_Surface* Alien_Array[12];
+	SDL_Rect Alien_Pos;
+	
+	Alien_Pos.x = 0;
+	Alien_Pos.y = 0;
+	Alien_Pos.w = 2;//Alien_Texture_Pos.w/MAP_W;
+	Alien_Pos.h = 2;//Alien_Texture_Pos.w/MAP_H;
+	
+	for(int y=0;y<MAP_H;y++){
+		for(int x=0;x<MAP_W;x++){
+			Alien_Pos.x = x;
+			Alien_Pos.y = y;
+			Alien_Array[y*MAP_H+x] = Alien_Texture;
+			if(SDL_RenderCopyEx(rend,
+					Alien_Array[y*MAP_H+x],
+					&Alien_Texture_Pos,
+					&Alien_Pos,
+					0,
+					0,
+					SDL_FLIP_NONE)==0){printf("error:%s\n", SDL_GetError());}
+		}
+	}
+	
 	SDL_Surface* surface_f	= IMG_Load("images/Alien_f.png");
 	SDL_Surface* surface_h	= IMG_Load("images/Alien_b.png");
 	SDL_Surface* surface_r	= IMG_Load("images/Alien_r.png");
@@ -56,6 +103,7 @@ int main(int argc, char *argv[])
 	SDL_FreeSurface(surface4);
 	SDL_FreeSurface(surface5);
 	SDL_FreeSurface(surface6);
+	
 
 	//player conect pos with image
 	SDL_Rect pos;
@@ -99,7 +147,7 @@ int main(int argc, char *argv[])
 			room_array[map[ry][rx]].data[(pos.y+pos.h+speed)/Tile_H][pos.x/Tile_W]			==0&&
 			room_array[map[ry][rx]].data[(pos.y+pos.h+speed)/Tile_H][(pos.x+pos.w)/Tile_W]	==0)
 			||(float)(pos.y+pos.h+speed)/Tile_H>16.0)){
-				pos.y+=speed;Alien = Alien_f;
+				pos.y+=speed;Alien = Alien_Array[0];//Alien_f;
 		}
 		
 		if (keys[KEY_D]&&((
