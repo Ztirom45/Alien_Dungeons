@@ -146,8 +146,8 @@ int main(int argc, char *argv[])
 		if (keys[KEY_S]&&((
 			room_array[map[ry][rx]].data[(pos.y+pos.h+speed)/Tile_H][pos.x/Tile_W]			==0&&
 			room_array[map[ry][rx]].data[(pos.y+pos.h+speed)/Tile_H][(pos.x+pos.w)/Tile_W]	==0)
-			||(float)(pos.y+pos.h+speed)/Tile_H>16.0)){
-				pos.y+=speed;Alien = Alien_Array[0];//Alien_f;
+			||(float)(pos.y+pos.h+speed)/Tile_H>15.0)){
+				pos.y+=speed;Alien = Alien_f;//Alien_Array[0];
 		}
 		
 		if (keys[KEY_D]&&((
