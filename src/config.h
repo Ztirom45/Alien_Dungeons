@@ -3,13 +3,21 @@
 #define win_h 1024
 
 //images
+#define ScaleFactor 4
+
+//tiles
 #define Tile_W 64
 #define Tile_H 64
-#define ScaleFactor 4
+
 
 //imageMap
 #define MAP_W 3
 #define MAP_H 4
+
+//Alien size
+#define Alien_W 10
+#define Alien_H 14
+
 
 //room
 #define tile_count 3

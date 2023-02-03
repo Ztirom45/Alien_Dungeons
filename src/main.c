@@ -2,6 +2,7 @@
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_timer.h>
 #include <stdbool.h>
+#include <stdlib.h>
 #include <math.h>
 
 #include "config.h"
@@ -30,76 +31,20 @@ int main(int argc, char *argv[])
 	SDL_Renderer* rend = SDL_CreateRenderer(win, -1, render_flags);
 
 	//load image
-	
-	/*
-	SDL_RenderCopyEx(pRenderer, m_textureMap[id],
-			&srcRect, &destRect, 0, 0, flip);
-			SDL_RenderCopyEx(pRenderer, m_textureMap[id],
-	
-	
-	int SDL_RenderCopyEx(SDL_Renderer * renderer,
-                   SDL_Texture * texture,
-                   const SDL_Rect * srcrect,
-                   const SDL_Rect * dstrect,
-                   const double angle,
-                   const SDL_Point *center,
-                   const SDL_RendererFlip flip);
-	*/
-		//load alien texture array
 	SDL_Surface* Alien_Surface	= IMG_Load("images/Alien.png");
 	SDL_Texture* Alien_Texture	= SDL_CreateTextureFromSurface(rend,Alien_Surface);
 	
-	SDL_Rect Alien_Texture_Pos;
-	SDL_QueryTexture(Alien_Texture, NULL, NULL, &Alien_Texture_Pos.w, &Alien_Texture_Pos.h);
-	Alien_Texture_Pos.w *= ScaleFactor;
-	Alien_Texture_Pos.h *= ScaleFactor;
 	
-	SDL_Surface* Alien_Array[12];
-	SDL_Rect Alien_Pos;
-	
-	Alien_Pos.x = 0;
-	Alien_Pos.y = 0;
-	Alien_Pos.w = 2;//Alien_Texture_Pos.w/MAP_W;
-	Alien_Pos.h = 2;//Alien_Texture_Pos.w/MAP_H;
-	
-	for(int y=0;y<MAP_H;y++){
-		for(int x=0;x<MAP_W;x++){
-			Alien_Pos.x = x;
-			Alien_Pos.y = y;
-			Alien_Array[y*MAP_H+x] = Alien_Texture;
-			if(SDL_RenderCopyEx(rend,
-					Alien_Array[y*MAP_H+x],
-					&Alien_Texture_Pos,
-					&Alien_Pos,
-					0,
-					0,
-					SDL_FLIP_NONE)==0){printf("error:%s\n", SDL_GetError());}
-		}
-	}
-	
-	SDL_Surface* surface_f	= IMG_Load("images/Alien_f.png");
-	SDL_Surface* surface_h	= IMG_Load("images/Alien_b.png");
-	SDL_Surface* surface_r	= IMG_Load("images/Alien_r.png");
-	SDL_Surface* surface_l	= IMG_Load("images/Alien_l.png");
 	SDL_Surface* surface4 	= IMG_Load("images/tile1.png");
 	SDL_Surface* surface5 	= IMG_Load("images/tile2.png");
 	SDL_Surface* surface6 	= IMG_Load("images/chest.png");
 		
-	SDL_Texture* Alien_f	= SDL_CreateTextureFromSurface(rend, surface_f);
-	SDL_Texture* Alien_h	= SDL_CreateTextureFromSurface(rend, surface_h);
-	SDL_Texture* Alien_r	= SDL_CreateTextureFromSurface(rend, surface_r);
-	SDL_Texture* Alien_l	= SDL_CreateTextureFromSurface(rend, surface_l);
-	SDL_Texture* Alien 		= Alien_f;
-	
+
 	SDL_Texture* bgtile1	= SDL_CreateTextureFromSurface(rend, surface4);
 	SDL_Texture* bgtile2	= SDL_CreateTextureFromSurface(rend, surface5);
 	SDL_Texture* bgtile_chest	= SDL_CreateTextureFromSurface(rend, surface6);
 	SDL_Texture* tile_array[tile_count] = {bgtile1,bgtile2,bgtile_chest};
 	
-	SDL_FreeSurface(surface_f);
-	SDL_FreeSurface(surface_h);
-	SDL_FreeSurface(surface_r);
-	SDL_FreeSurface(surface_l);
 	SDL_FreeSurface(surface4);
 	SDL_FreeSurface(surface5);
 	SDL_FreeSurface(surface6);
@@ -107,13 +52,18 @@ int main(int argc, char *argv[])
 
 	//player conect pos with image
 	SDL_Rect pos;
-	SDL_QueryTexture(Alien_f, NULL, NULL, &pos.w, &pos.h);
-	pos.w *= 4;
-	pos.h *= 4;
+	pos.w = Alien_W*ScaleFactor;
+	pos.h = Alien_H*ScaleFactor;
 	pos.x = (1000 - pos.w) / 2;
 	pos.y = (1000 - pos.h) / 2;
 	int speed = 5;
 	
+	//texture array select rect
+	SDL_Rect Alien_Pos;
+	Alien_Pos.x = 0;
+	Alien_Pos.y = 0;
+	Alien_Pos.w = Alien_W;//Alien_Texture_Pos.w/MAP_W;
+	Alien_Pos.h = Alien_H;//Alien_Texture_Pos.w/MAP_H;
 	
 	bool loop = true;
 	while (loop) {
@@ -141,25 +91,32 @@ int main(int argc, char *argv[])
 		if (keys[KEY_W]&&
 			room_array[map[ry][rx]].data[(pos.y-speed)/Tile_H][pos.x/Tile_W]==0&&
 			room_array[map[ry][rx]].data[(pos.y-speed)/Tile_H][(pos.x+pos.w)/Tile_W]==0){
-				pos.y-=speed;Alien = Alien_h;
+				pos.y-=speed;
+				
+				Alien_Pos.y = Alien_H*3;
+
 		}
 		if (keys[KEY_S]&&((
 			room_array[map[ry][rx]].data[(pos.y+pos.h+speed)/Tile_H][pos.x/Tile_W]			==0&&
 			room_array[map[ry][rx]].data[(pos.y+pos.h+speed)/Tile_H][(pos.x+pos.w)/Tile_W]	==0)
 			||(float)(pos.y+pos.h+speed)/Tile_H>15.0)){
-				pos.y+=speed;Alien = Alien_f;//Alien_Array[0];
+				pos.y+=speed;
+				Alien_Pos.y = 0;
 		}
 		
 		if (keys[KEY_D]&&((
 			room_array[map[ry][rx]].data[(pos.y)		/Tile_H][(pos.x+pos.w+speed)/Tile_W]==0&&
 			room_array[map[ry][rx]].data[(pos.y+pos.h)	/Tile_H][(pos.x+pos.w+speed)/Tile_W]==0)
 			||((float)(pos.x+pos.w+speed)/Tile_W)>16.0)){
-				pos.x+=speed;Alien = Alien_r;
+				pos.x+=speed;
+				Alien_Pos.y = Alien_H*2;
+
 		}
 		if (keys[KEY_A]&&
 			room_array[map[ry][rx]].data[(pos.y)/Tile_H]		[(pos.x-speed)/Tile_W]==0&&
 			room_array[map[ry][rx]].data[(pos.y+pos.h)/Tile_H]	[(pos.x-speed)/Tile_W]==0){
-				pos.x-=speed;Alien = Alien_l;
+				pos.x-=speed;
+				Alien_Pos.y = Alien_H;
 		}
 		
 		//window border
@@ -197,9 +154,9 @@ int main(int argc, char *argv[])
 			}
 		}
 		
-		
 		//draw player
-		SDL_RenderCopy(rend, Alien, NULL, &pos);
+		
+		SDL_RenderCopy(rend,Alien_Texture,&Alien_Pos, &pos);
 
 		// for multiple rendering
 		SDL_RenderPresent(rend);
@@ -209,11 +166,7 @@ int main(int argc, char *argv[])
 	}
 
 	//posroy
-	SDL_DestroyTexture(Alien_f);
-	SDL_DestroyTexture(Alien_l);
-	SDL_DestroyTexture(Alien_r);
-	SDL_DestroyTexture(Alien_h);
-	SDL_DestroyTexture(Alien);
+	SDL_DestroyTexture(Alien_Texture);
 	SDL_DestroyTexture(bgtile1);
 	SDL_DestroyTexture(bgtile2);
 	SDL_DestroyTexture(bgtile_chest);
