@@ -64,6 +64,8 @@ int main(int argc, char *argv[])
 	Alien_Pos.y = 0;
 	Alien_Pos.w = Alien_W;//Alien_Texture_Pos.w/MAP_W;
 	Alien_Pos.h = Alien_H;//Alien_Texture_Pos.w/MAP_H;
+
+	int frame_counter = 0;//count frames for walk animation callculation
 	
 	bool loop = true;
 	while (loop) {
@@ -99,7 +101,7 @@ int main(int argc, char *argv[])
 		if (keys[KEY_S]&&((
 			room_array[map[ry][rx]].data[(pos.y+pos.h+speed)/Tile_H][pos.x/Tile_W]			==0&&
 			room_array[map[ry][rx]].data[(pos.y+pos.h+speed)/Tile_H][(pos.x+pos.w)/Tile_W]	==0)
-			||(float)(pos.y+pos.h+speed)/Tile_H>15.0)){
+			||(float)(pos.y+pos.h+speed)/Tile_H>15.5)){
 				pos.y+=speed;
 				Alien_Pos.y = 0;
 		}
@@ -117,6 +119,9 @@ int main(int argc, char *argv[])
 			room_array[map[ry][rx]].data[(pos.y+pos.h)/Tile_H]	[(pos.x-speed)/Tile_W]==0){
 				pos.x-=speed;
 				Alien_Pos.y = Alien_H;
+		}
+		if(keys[KEY_W]||keys[KEY_A]||keys[KEY_S]||keys[KEY_D]){
+			frame_counter++;
 		}
 		
 		//window border
@@ -137,9 +142,15 @@ int main(int argc, char *argv[])
 			ry-=1;
 		}
 		
+		//walkanimation
 		
-		//touch
-		
+		if(frame_counter>ANIMATION_DELAY_FRAMES){
+			Alien_Pos.x = Frame_Array[Frame_Now];
+			if(++Frame_Now>ANIMATION_FRAMES-1){
+				Frame_Now = 0;
+			}
+			frame_counter = 0;
+		}
 		
 		///DRAW
 		// clears the screen
