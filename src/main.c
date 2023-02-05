@@ -82,8 +82,6 @@ int main(int argc, char *argv[])
 		SDL_Event event;
 		
 		///game update
-		//printf("%d %d %d %d : %d %d %d %d  \n",Enimy1.rect.x,Enimy1.rect.y,Enimy1.rect.w,Enimy1.rect.h,		pos.x,pos.y,pos.w,pos.h);
-		printf("%d\n",TOUCH_RECT(79,237,40,56, 817,209,40,56));
 			if(TOUCH_RECT(Enimy1.rect.x,Enimy1.rect.y,Enimy1.rect.x+Enimy1.rect.w,Enimy1.rect.y+Enimy1.rect.h,
 						pos.x,pos.y,pos.w+pos.x,pos.h+pos.y)){
 				loop = false;
