@@ -20,7 +20,8 @@
 //config
 
 static bool keys[UINT32SIZE];
- 
+
+
 int main(int argc, char *argv[])
 {
 
@@ -74,8 +75,8 @@ int main(int argc, char *argv[])
 	
 	Enimy1.speed = 5;
 	Entity_LoadImage(&Enimy1,"images/Alien.png",rend);
-	Enimy1.rect.x = 16;
-	Enimy1.rect.y = 16;
+	Enimy1.rect.x = 128;
+	Enimy1.rect.y = 128;
 	
 	while (loop) {
 		SDL_Event event;

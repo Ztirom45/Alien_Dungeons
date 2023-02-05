@@ -40,22 +40,37 @@ void Entity_Update(entity *entity_ptr,SDL_Rect player_rect){
 	int angle = atan2f(player_y, player_x)/PI*180;
 	if(angle>=-125&&angle<=-45){//up
 		entity_ptr->img_rect.y = 14*3;
-		entity_ptr->rect.y-=entity_ptr->speed;
+		if(room_array[map[ry][rx]].data[(entity_ptr->rect.y-entity_ptr->speed)/Tile_H][entity_ptr->rect.x/Tile_W]==0&&
+			room_array[map[ry][rx]].data[(entity_ptr->rect.y-entity_ptr->speed)/Tile_H][(entity_ptr->rect.x+entity_ptr->rect.w)/Tile_W]==0){
+				entity_ptr->rect.y-=entity_ptr->speed;
+		}
+		
 	}else 
 	
 	if(angle>=125||angle<=-125){//left
 		entity_ptr->img_rect.y = 14;
-		entity_ptr->rect.x-=entity_ptr->speed;
+		if(room_array[map[ry][rx]].data[(entity_ptr->rect.y)/Tile_H]		[(entity_ptr->rect.x-entity_ptr->speed)/Tile_W]==0&&
+			room_array[map[ry][rx]].data[(entity_ptr->rect.y+entity_ptr->rect.h)/Tile_H]	[(entity_ptr->rect.x-entity_ptr->speed)/Tile_W]==0){
+				entity_ptr->rect.x-=entity_ptr->speed;
+		}
 	}else 
 	
 	if(angle<=125&&angle>=45){//down
 		entity_ptr->img_rect.y = 0;
-		entity_ptr->rect.y+=entity_ptr->speed;
+		if((room_array[map[ry][rx]].data[(entity_ptr->rect.y+entity_ptr->rect.h+entity_ptr->speed)/Tile_H][entity_ptr->rect.x/Tile_W]==0&&
+			room_array[map[ry][rx]].data[(entity_ptr->rect.y+entity_ptr->rect.h+entity_ptr->speed)/Tile_H][(entity_ptr->rect.x+entity_ptr->rect.w)/Tile_W]==0)
+			||(float)(entity_ptr->rect.y+entity_ptr->img_rect.h+entity_ptr->speed)/Tile_H>15.5){
+				entity_ptr->rect.y+=entity_ptr->speed;
+		}
 	}else//right
 	
 	{
 		entity_ptr->img_rect.y = 14*2;
-		entity_ptr->rect.x+=entity_ptr->speed;
+		if((room_array[map[ry][rx]].data[(entity_ptr->rect.y)		/Tile_H][(entity_ptr->rect.x+entity_ptr->rect.w+entity_ptr->speed)/Tile_W]==0&&
+			room_array[map[ry][rx]].data[(entity_ptr->rect.y+entity_ptr->rect.h)	/Tile_H][(entity_ptr->rect.x+entity_ptr->rect.w+entity_ptr->speed)/Tile_W]==0)
+			||((float)(entity_ptr->rect.x+entity_ptr->rect.w+entity_ptr->speed)/Tile_W)>16.0){
+				entity_ptr->rect.x+=entity_ptr->speed;
+			}
 	}
 }
 
