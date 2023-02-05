@@ -57,9 +57,6 @@ void Entity_Update(entity *entity_ptr,SDL_Rect player_rect){
 		entity_ptr->img_rect.y = 14*2;
 		entity_ptr->rect.x+=entity_ptr->speed;
 	}
-	
-	printf("%d\n",angle);
-	//entity_ptr->rect.x+=entity_ptr->speed;
 }
 
 void Entity_Draw(entity *entity_ptr,SDL_Renderer *rend){
