@@ -34,7 +34,7 @@
 #define ANIMATION_DELAY_FRAMES 2
 #define ANIMATION_FRAMES 5 //count+1(bug)
 
-int Frame_Array[ANIMATION_FRAMES] = {0,10,0,20,0};
-int Frame_Now = 0;
+Uint8 Frame_Array[ANIMATION_FRAMES] = {0,10,0,20,0};
+Uint8 Frame_Now = 0;
 
 #endif

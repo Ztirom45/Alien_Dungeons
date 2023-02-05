@@ -4,7 +4,7 @@ static int rx = 1;
 static int ry = 1;
 
 typedef struct _room{
-	int data[room_w][room_h];
+	Uint8 data[room_w][room_h];
 }room;
 
 /*
