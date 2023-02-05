@@ -7,6 +7,7 @@
 
 #include "config.h"
 #include "rooms.h"
+#include "enemy.h"
 
 #define UINT32SIZE 4294967296
 #define KEY_W 119
@@ -50,28 +51,38 @@ int main(int argc, char *argv[])
 	SDL_FreeSurface(surface6);
 	
 
-	//player conect pos with image
+	//pos
 	SDL_Rect pos;
 	pos.w = Alien_W*ScaleFactor;
 	pos.h = Alien_H*ScaleFactor;
-	pos.x = (1000 - pos.w) / 2;
-	pos.y = (1000 - pos.h) / 2;
+	pos.x = (1024 - pos.w) / 2;
+	pos.y = (1024 - pos.h) / 2;
 	int speed = 5;
 	
 	//texture array select rect
 	SDL_Rect Alien_Pos;
 	Alien_Pos.x = 0;
 	Alien_Pos.y = 0;
-	Alien_Pos.w = Alien_W;//Alien_Texture_Pos.w/MAP_W;
-	Alien_Pos.h = Alien_H;//Alien_Texture_Pos.w/MAP_H;
+	Alien_Pos.w = Alien_W;//Alien_Texture_Pos.w/IMG_MAP_W;
+	Alien_Pos.h = Alien_H;//Alien_Texture_Pos.w/IMG_MAP_H;
 
 	int frame_counter = 0;//count frames for walk animation callculation
 	
 	bool loop = true;
+	entity Enimy1;
+	
+	Enimy1.speed = 5;
+	Entity_LoadImage(&Enimy1,"images/Alien.png",rend);
+	Enimy1.rect.x = 512;
+	Enimy1.rect.y = 512;
+	
 	while (loop) {
 		SDL_Event event;
 		
-		///MOVE
+		///entity update
+		Entity_Update(&Enimy1,pos);
+		
+		///MOVE&&player update
 		//events
 		const Uint8 *keyboard_state_array = SDL_GetKeyboardState(NULL);
 		while (SDL_PollEvent(&event)) {
@@ -169,6 +180,9 @@ int main(int argc, char *argv[])
 		
 		SDL_RenderCopy(rend,Alien_Texture,&Alien_Pos, &pos);
 
+		//DRAW ENIMES
+		Entity_Draw(&Enimy1,rend);
+		
 		// for multiple rendering
 		SDL_RenderPresent(rend);
 

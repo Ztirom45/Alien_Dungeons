@@ -13,8 +13,8 @@
 
 
 //imageMap
-#define MAP_W 3
-#define MAP_H 4
+#define IMG_MAP_W 3
+#define IMG_MAP_H 4
 
 //Alien size
 #define Alien_W 10
