@@ -12,17 +12,14 @@ bool findPath(int room_x,int room_y,int pos_x,int pos_y,int goal_x,int goal_y){
 		printf("reached\n");
 		return 1;
 	}
-	printf("%d %d\n",pos_x,pos_y);
 	//printf("%u\n",&room_ptr->data[0][0]);
-	if(room_array[map[room_y][room_x]].data[pos_x][pos_y]==0&&pos_x<room_w&&pos_y<room_h){
+	if(room_array[map[room_y][room_x]].data[pos_x][pos_y]==0&&pos_x<room_w&&pos_y<room_h&&pos_x>=0&&pos_y>=0){
 		path[pos_x][pos_y] = 1;
 		walked[pos_x][pos_y] = 1;
-		if(findPath(room_y,room_y, pos_x,pos_y+1,goal_x,goal_y) == 1){return 1;}
-		if(findPath(room_y,room_y, pos_x+1,pos_y,goal_x,goal_y) == 1){return 1;}
-		
-		
-		//if(findPath(room_y,room_y, pos_x,pos_y-1,goal_x,goal_y) == 1) return 1;
-		//if(findPath(room_y,room_y, pos_x-1,pos_y,goal_x,goal_y) == 1) return 1;
+		if(walked[pos_x][pos_y+1]==0) if(findPath(room_y,room_y, pos_x,pos_y+1,goal_x,goal_y) == 1){return 1;}
+		if(walked[pos_x+1][pos_y]==0) if(findPath(room_y,room_y, pos_x+1,pos_y,goal_x,goal_y) == 1){return 1;}
+		if(walked[pos_x][pos_y-1]==0) if(findPath(room_y,room_y, pos_x,pos_y-1,goal_x,goal_y) == 1){return 1;}
+		if(walked[pos_x-1][pos_y]==0) if(findPath(room_y,room_y, pos_x-1,pos_y,goal_x,goal_y) == 1){return 1;}
 		path[pos_x][pos_y] = 0;
 	}else{
 		return 0;
