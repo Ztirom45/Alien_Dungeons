@@ -1,7 +1,7 @@
 #include "path_finder.h"
 
 void main(){
-	findPath(&room_array[map[1][1]],0,0,10,10);
+	printf("%d\n",findPath(1,1,2,2,14,2));
 	
 	for(int y=0;y<room_h;y++){
 		for(int x=0;x<room_w;x++){
