@@ -10,9 +10,12 @@ void main(){
 			}else{
 				printf("#");
 			}
-			printf("%d",path[x][y]);
+			printf("%d",walked[x][y]);
 			
 		}
 		printf("\n");
+	}
+	for(int i=0;i<path_len;i++){
+		printf("%d %d\n",path[i].x,path[i].y);
 	}
 }
