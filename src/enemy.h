@@ -43,7 +43,6 @@ void Entity_Update(entity *entity_ptr,SDL_Rect player_rect){
 					(entity_ptr->rect.x+(entity_ptr->rect.w/2));
 	int player_y = player_rect.y+(player_rect.h/2)-
 					(entity_ptr->rect.y+(entity_ptr->rect.h/2));
-	
 	if(!path_finder_succes){
 		int angle = atan2f(player_y, player_x)/PI*180;
 		if(angle>=-125&&angle<=-45){//up
@@ -88,31 +87,48 @@ void Entity_Update(entity *entity_ptr,SDL_Rect player_rect){
 		
 		//find path
 		if(!move){
-			printf("fi\n");
-			findPath(rx,ry,entity_ptr->rect.x,entity_ptr->rect.y,player_rect.x,player_rect.y);
-			
+			findPath(ry,rx,(int)entity_ptr->rect.x/Tile_W,entity_ptr->rect.y/Tile_W,player_rect.x/Tile_W,player_rect.y/Tile_W);
+			for(int x=0;x<room_w;x++){
+				for(int y=0;y<room_h;y++){
+					if (room_array[map[ry][rx]].data[x][y] == 0){
+						printf(" ");
+					}else{
+						printf("#");
+					}
+					printf("%d",walked[x][y]);
+					
+				}
+				printf("\n");
+			}
+
 		}
 	
 	//follow path
 	}else{
-		printf("hi\n");
+		bool reached_x,reached_y = false;
 		//move x to path[path_pos].x
-		if(!path[entity_ptr->path_pos].x*Tile_W==entity_ptr->rect.x){
+		if(!(path[entity_ptr->path_pos].x*Tile_W==entity_ptr->rect.x)){
 			int x_dist = entity_ptr->rect.x-path[entity_ptr->path_pos].x*Tile_W;//distance betwen entity.rect.y and path[path_pos].y
 			if(entity_ptr->speed<abs(x_dist)){
 				entity_ptr->rect.x+= x_dist/abs(x_dist)*entity_ptr->speed;
 			}else {
 				entity_ptr->rect.x = path[entity_ptr->path_pos].x*Tile_W;
+				reached_x = true;
 			}
 		}
 		//move y to path[path_pos].y
-		if(!path[entity_ptr->path_pos].y*Tile_H==entity_ptr->rect.y){
+		if(!(path[entity_ptr->path_pos].y*Tile_H==entity_ptr->rect.y)){
 			int y_dist = entity_ptr->rect.y-path[entity_ptr->path_pos].y*Tile_H;//distance betwen entity.rect.y and path[path_pos].y
 			if(entity_ptr->speed<abs(y_dist)){
 				entity_ptr->rect.y += y_dist/abs(y_dist)*entity_ptr->speed;
 			}else {
+				
 				entity_ptr->rect.y = path[entity_ptr->path_pos].y*Tile_H;
+				reached_y = true;
 			}
+		}
+		if(reached_y&&reached_y){
+			entity_ptr->path_pos++;
 		}
 	}
 	//walkanimation

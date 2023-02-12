@@ -57,8 +57,8 @@ int main(int argc, char *argv[])
 	SDL_Rect pos;
 	pos.w = Alien_W*ScaleFactor;
 	pos.h = Alien_H*ScaleFactor;
-	pos.x = (1024 - pos.w) / 2;
-	pos.y = (1024 - pos.h) / 2;
+	pos.x = (1024) / 2;
+	pos.y = (1024) / 2;
 	int speed = 5;
 	
 	//texture array select rect

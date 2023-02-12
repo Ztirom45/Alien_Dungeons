@@ -3,7 +3,7 @@
 #include "config.h"
 
 static int rx = 1;
-static int ry = 1;
+static int ry = 0;
 
 typedef struct _room{
 	Uint8 data[room_w][room_h];
