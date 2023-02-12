@@ -29,7 +29,7 @@ void Entity_LoadImage(entity *entity_ptr,char* path ,SDL_Renderer* rend){
 	entity_ptr->rect.w = entity_ptr->img_rect.w *ScaleFactor;
 	entity_ptr->rect.h = entity_ptr->img_rect.h *ScaleFactor;
 	
-	entity_ptr->path_pos=0;
+	entity_ptr->path_pos=2;
 	
 
 	
@@ -100,6 +100,10 @@ void Entity_Update(entity *entity_ptr,SDL_Rect player_rect){
 				}
 				printf("\n");
 			}
+			printf("A:%d %d\n",entity_ptr->rect.x/Tile_W,entity_ptr->rect.y/Tile_H);
+			for(int i=0;i<path_len;i++){
+				printf("%d %d\n",path[i].x,path[i].y);
+			}
 
 		}
 	
@@ -107,18 +111,17 @@ void Entity_Update(entity *entity_ptr,SDL_Rect player_rect){
 	}else{
 		bool reached_x,reached_y = false;
 		//move x to path[path_pos].x
-		if(!(path[entity_ptr->path_pos].x*Tile_W==entity_ptr->rect.x)){
-			int x_dist = entity_ptr->rect.x-path[entity_ptr->path_pos].x*Tile_W;//distance betwen entity.rect.y and path[path_pos].y
-			if(entity_ptr->speed<abs(x_dist)){
-				entity_ptr->rect.x+= x_dist/abs(x_dist)*entity_ptr->speed;
-			}else {
-				entity_ptr->rect.x = path[entity_ptr->path_pos].x*Tile_W;
-				reached_x = true;
-			}
-		}
+		int x_dist = path[entity_ptr->path_pos].x*64-entity_ptr->rect.x;
+		int x_dirc = x_dist/abs(x_dist);
+		
+		printf("%d\n",x_dirc);
+		
+		//entity_ptr.pos.y = path[entity_ptr->path_pos].y;
+		
 		//move y to path[path_pos].y
-		if(!(path[entity_ptr->path_pos].y*Tile_H==entity_ptr->rect.y)){
-			int y_dist = entity_ptr->rect.y-path[entity_ptr->path_pos].y*Tile_H;//distance betwen entity.rect.y and path[path_pos].y
+		/*
+		if(!(path[entity_ptr->path_pos].y==(int)(entity_ptr->rect.y)/Tile_H)){
+			int y_dist = path[entity_ptr->path_pos].y*Tile_H-entity_ptr->rect.y; //distance betwen entity.rect.y and path[path_pos].y
 			if(entity_ptr->speed<abs(y_dist)){
 				entity_ptr->rect.y += y_dist/abs(y_dist)*entity_ptr->speed;
 			}else {
@@ -127,7 +130,8 @@ void Entity_Update(entity *entity_ptr,SDL_Rect player_rect){
 				reached_y = true;
 			}
 		}
-		if(reached_y&&reached_y){
+		*/
+		if(reached_y){
 			entity_ptr->path_pos++;
 		}
 	}

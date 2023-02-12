@@ -58,7 +58,7 @@ int main(int argc, char *argv[])
 	pos.w = Alien_W*ScaleFactor;
 	pos.h = Alien_H*ScaleFactor;
 	pos.x = (1024) / 2;
-	pos.y = (1024) / 2;
+	pos.y = (1024) / 2+64;
 	int speed = 5;
 	
 	//texture array select rect

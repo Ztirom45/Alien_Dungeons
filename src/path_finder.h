@@ -12,17 +12,17 @@ static bool path_finder_succes = 0;
 bool findPath(int room_x,int room_y,int pos_x,int pos_y,int goal_x,int goal_y){
 	
 	
-	
+	if(pos_x==goal_x&&pos_y == goal_y){
+		path_len++;
+		path[path_len].x = pos_y;
+		path[path_len].y = pos_x;
+		path_finder_succes = 1;
+		printf("reached\n");
+		return 1;
+	}
 	if(room_array[map[room_x][room_y]].data[pos_x][pos_y]==0&&pos_x<room_w&&pos_y<room_h&&pos_x>=0&&pos_y>=0){
 		printf("%d\n",room_array[map[room_y][room_x]].data[pos_x][pos_y]);
-		if(pos_x==goal_x&&pos_y == goal_y){
-			path_len++;
-			path[path_len].x = pos_y;
-			path[path_len].y = pos_x;
-			path_finder_succes = 1;
-			printf("reached\n");
-			return 1;
-		}
+
 		
 		path_len++;
 		path[path_len].x = pos_x;
