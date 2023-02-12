@@ -1,3 +1,5 @@
+#ifndef ROOM_INCLUDE
+#define ROOM_INCLUDE
 #include "config.h"
 
 static int rx = 1;
@@ -232,3 +234,4 @@ static int map[map_w][map_h] = {
 	{4,0,3},
 	{5,1,7}
 };
+#endif

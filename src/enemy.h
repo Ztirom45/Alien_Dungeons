@@ -1,4 +1,5 @@
 #include "config.h"
+#include "path_finder.h"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_timer.h>
@@ -11,6 +12,7 @@ typedef struct __entity{
 	Uint8 speed;
 	Uint8 frame_now;
 	SDL_Texture* Texture;
+	int path_pos;//position in path array
 }entity;
 
 //entity functions
@@ -26,6 +28,9 @@ void Entity_LoadImage(entity *entity_ptr,char* path ,SDL_Renderer* rend){
 	
 	entity_ptr->rect.w = entity_ptr->img_rect.w *ScaleFactor;
 	entity_ptr->rect.h = entity_ptr->img_rect.h *ScaleFactor;
+	
+	entity_ptr->path_pos=0;
+	
 
 	
 }
@@ -39,44 +44,76 @@ void Entity_Update(entity *entity_ptr,SDL_Rect player_rect){
 	int player_y = player_rect.y+(player_rect.h/2)-
 					(entity_ptr->rect.y+(entity_ptr->rect.h/2));
 	
-	int angle = atan2f(player_y, player_x)/PI*180;
-	if(angle>=-125&&angle<=-45){//up
-		entity_ptr->img_rect.y = 14*3;
-		if(room_array[map[ry][rx]].data[(entity_ptr->rect.y-entity_ptr->speed)/Tile_H][entity_ptr->rect.x/Tile_W]==0&&
-			room_array[map[ry][rx]].data[(entity_ptr->rect.y-entity_ptr->speed)/Tile_H][(entity_ptr->rect.x+entity_ptr->rect.w)/Tile_W]==0){
-				entity_ptr->rect.y-=entity_ptr->speed;
-				move = true;
+	if(!path_finder_succes){
+		int angle = atan2f(player_y, player_x)/PI*180;
+		if(angle>=-125&&angle<=-45){//up
+			entity_ptr->img_rect.y = 14*3;
+			if(room_array[map[ry][rx]].data[(entity_ptr->rect.y-entity_ptr->speed)/Tile_H][entity_ptr->rect.x/Tile_W]==0&&
+				room_array[map[ry][rx]].data[(entity_ptr->rect.y-entity_ptr->speed)/Tile_H][(entity_ptr->rect.x+entity_ptr->rect.w)/Tile_W]==0){
+					entity_ptr->rect.y-=entity_ptr->speed;
+					move = true;
+			}
+			
+		}else 
+		
+		if(angle>=125||angle<=-125){//left
+			entity_ptr->img_rect.y = 14;
+			if(room_array[map[ry][rx]].data[(entity_ptr->rect.y)/Tile_H]		[(entity_ptr->rect.x-entity_ptr->speed)/Tile_W]==0&&
+				room_array[map[ry][rx]].data[(entity_ptr->rect.y+entity_ptr->rect.h)/Tile_H]	[(entity_ptr->rect.x-entity_ptr->speed)/Tile_W]==0){
+					entity_ptr->rect.x-=entity_ptr->speed;
+					move = true;
+			}
+		}else 
+		
+		if(angle<=125&&angle>=45){//down
+			entity_ptr->img_rect.y = 0;
+			if((room_array[map[ry][rx]].data[(entity_ptr->rect.y+entity_ptr->rect.h+entity_ptr->speed)/Tile_H][entity_ptr->rect.x/Tile_W]==0&&
+				room_array[map[ry][rx]].data[(entity_ptr->rect.y+entity_ptr->rect.h+entity_ptr->speed)/Tile_H][(entity_ptr->rect.x+entity_ptr->rect.w)/Tile_W]==0)
+				||(float)(entity_ptr->rect.y+entity_ptr->img_rect.h+entity_ptr->speed)/Tile_H>15.5){
+					entity_ptr->rect.y+=entity_ptr->speed;
+					move = true;
+			}
+		}else//right
+		
+		
+		if(angle<=45&&angle>=-45){
+			entity_ptr->img_rect.y = 14*2;
+			if((room_array[map[ry][rx]].data[(entity_ptr->rect.y)		/Tile_H][(entity_ptr->rect.x+entity_ptr->rect.w+entity_ptr->speed)/Tile_W]==0&&
+				room_array[map[ry][rx]].data[(entity_ptr->rect.y+entity_ptr->rect.h)	/Tile_H][(entity_ptr->rect.x+entity_ptr->rect.w+entity_ptr->speed)/Tile_W]==0)
+				||((float)(entity_ptr->rect.x+entity_ptr->rect.w+entity_ptr->speed)/Tile_W)>16.0){
+					entity_ptr->rect.x+=entity_ptr->speed;
+					move = true;
+				}
 		}
 		
-	}else 
-	
-	if(angle>=125||angle<=-125){//left
-		entity_ptr->img_rect.y = 14;
-		if(room_array[map[ry][rx]].data[(entity_ptr->rect.y)/Tile_H]		[(entity_ptr->rect.x-entity_ptr->speed)/Tile_W]==0&&
-			room_array[map[ry][rx]].data[(entity_ptr->rect.y+entity_ptr->rect.h)/Tile_H]	[(entity_ptr->rect.x-entity_ptr->speed)/Tile_W]==0){
-				entity_ptr->rect.x-=entity_ptr->speed;
-				move = true;
+		//find path
+		if(!move){
+			printf("fi\n");
+			findPath(rx,ry,entity_ptr->rect.x,entity_ptr->rect.y,player_rect.x,player_rect.y);
+			
 		}
-	}else 
 	
-	if(angle<=125&&angle>=45){//down
-		entity_ptr->img_rect.y = 0;
-		if((room_array[map[ry][rx]].data[(entity_ptr->rect.y+entity_ptr->rect.h+entity_ptr->speed)/Tile_H][entity_ptr->rect.x/Tile_W]==0&&
-			room_array[map[ry][rx]].data[(entity_ptr->rect.y+entity_ptr->rect.h+entity_ptr->speed)/Tile_H][(entity_ptr->rect.x+entity_ptr->rect.w)/Tile_W]==0)
-			||(float)(entity_ptr->rect.y+entity_ptr->img_rect.h+entity_ptr->speed)/Tile_H>15.5){
-				entity_ptr->rect.y+=entity_ptr->speed;
-				move = true;
-		}
-	}else//right
-	
-	{
-		entity_ptr->img_rect.y = 14*2;
-		if((room_array[map[ry][rx]].data[(entity_ptr->rect.y)		/Tile_H][(entity_ptr->rect.x+entity_ptr->rect.w+entity_ptr->speed)/Tile_W]==0&&
-			room_array[map[ry][rx]].data[(entity_ptr->rect.y+entity_ptr->rect.h)	/Tile_H][(entity_ptr->rect.x+entity_ptr->rect.w+entity_ptr->speed)/Tile_W]==0)
-			||((float)(entity_ptr->rect.x+entity_ptr->rect.w+entity_ptr->speed)/Tile_W)>16.0){
-				entity_ptr->rect.x+=entity_ptr->speed;
-				move = true;
+	//follow path
+	}else{
+		printf("hi\n");
+		//move x to path[path_pos].x
+		if(!path[entity_ptr->path_pos].x*Tile_W==entity_ptr->rect.x){
+			int x_dist = entity_ptr->rect.x-path[entity_ptr->path_pos].x*Tile_W;//distance betwen entity.rect.y and path[path_pos].y
+			if(entity_ptr->speed<abs(x_dist)){
+				entity_ptr->rect.x+= x_dist/abs(x_dist)*entity_ptr->speed;
+			}else {
+				entity_ptr->rect.x = path[entity_ptr->path_pos].x*Tile_W;
 			}
+		}
+		//move y to path[path_pos].y
+		if(!path[entity_ptr->path_pos].y*Tile_H==entity_ptr->rect.y){
+			int y_dist = entity_ptr->rect.y-path[entity_ptr->path_pos].y*Tile_H;//distance betwen entity.rect.y and path[path_pos].y
+			if(entity_ptr->speed<abs(y_dist)){
+				entity_ptr->rect.y += y_dist/abs(y_dist)*entity_ptr->speed;
+			}else {
+				entity_ptr->rect.y = path[entity_ptr->path_pos].y*Tile_H;
+			}
+		}
 	}
 	//walkanimation
 	if(move){

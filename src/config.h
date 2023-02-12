@@ -1,5 +1,7 @@
-#ifndef CONFIG
-#define CONFIG
+#include <SDL2/SDL.h>
+
+#ifndef CONFIG_INCLUDE
+#define CONFIG_INCLUDE
 //window
 #define win_w 1024
 #define win_h 1024

@@ -1,3 +1,4 @@
+#include "rooms.h"
 #include "path_finder.h"
 
 void main(){

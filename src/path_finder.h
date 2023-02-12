@@ -2,7 +2,6 @@
 #include <stdbool.h>
 
 #include "config.h"
-#include "rooms.h"
 #include "cvec.h"
 
 static int path_len = 0;
@@ -25,10 +24,18 @@ bool findPath(int room_x,int room_y,int pos_x,int pos_y,int goal_x,int goal_y){
 		path[path_len].x = pos_x;
 		path[path_len].y = pos_y;
 		walked[pos_x][pos_y] = 1;
-		if(walked[pos_x][pos_y+1]==0) if(findPath(room_y,room_y, pos_x,pos_y+1,goal_x,goal_y) == 1){return 1;}
-		if(walked[pos_x+1][pos_y]==0) if(findPath(room_y,room_y, pos_x+1,pos_y,goal_x,goal_y) == 1){return 1;}
-		if(walked[pos_x][pos_y-1]==0) if(findPath(room_y,room_y, pos_x,pos_y-1,goal_x,goal_y) == 1){return 1;}
-		if(walked[pos_x-1][pos_y]==0) if(findPath(room_y,room_y, pos_x-1,pos_y,goal_x,goal_y) == 1){return 1;}
+		if(abs(pos_x-goal_x)<abs(pos_y-goal_y)){
+			if(walked[pos_x][pos_y+1]==0) if(findPath(room_y,room_y, pos_x,pos_y+1,goal_x,goal_y) == 1){return 1;}
+			if(walked[pos_x+1][pos_y]==0) if(findPath(room_y,room_y, pos_x+1,pos_y,goal_x,goal_y) == 1){return 1;}
+			if(walked[pos_x][pos_y-1]==0) if(findPath(room_y,room_y, pos_x,pos_y-1,goal_x,goal_y) == 1){return 1;}
+			if(walked[pos_x-1][pos_y]==0) if(findPath(room_y,room_y, pos_x-1,pos_y,goal_x,goal_y) == 1){return 1;}
+		}else{
+			
+			if(walked[pos_x+1][pos_y]==0) if(findPath(room_y,room_y, pos_x+1,pos_y,goal_x,goal_y) == 1){return 1;}
+			if(walked[pos_x][pos_y+1]==0) if(findPath(room_y,room_y, pos_x,pos_y+1,goal_x,goal_y) == 1){return 1;}
+			if(walked[pos_x-1][pos_y]==0) if(findPath(room_y,room_y, pos_x-1,pos_y,goal_x,goal_y) == 1){return 1;}
+			if(walked[pos_x][pos_y-1]==0) if(findPath(room_y,room_y, pos_x,pos_y-1,goal_x,goal_y) == 1){return 1;}
+		}
 		path_len--;
 		
 	}else{

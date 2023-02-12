@@ -34,13 +34,13 @@ int main(int argc, char *argv[])
 	SDL_Renderer* rend = SDL_CreateRenderer(win, -1, render_flags);
 
 	//load image
-	SDL_Surface* Alien_Surface	= IMG_Load("images/Alien.png");
+	SDL_Surface* Alien_Surface	= IMG_Load("images/Ztirom.png");
 	SDL_Texture* Alien_Texture	= SDL_CreateTextureFromSurface(rend,Alien_Surface);
 	
 	
 	SDL_Surface* surface4 	= IMG_Load("images/tile1.png");
 	SDL_Surface* surface5 	= IMG_Load("images/tile2.png");
-	SDL_Surface* surface6 	= IMG_Load("images/chest.png");
+	SDL_Surface* surface6 	= IMG_Load("/home/moritz/Dokumente/Projekte/Alien/C/images/chest3.png");
 		
 
 	SDL_Texture* bgtile1	= SDL_CreateTextureFromSurface(rend, surface4);
@@ -74,7 +74,7 @@ int main(int argc, char *argv[])
 	entity Enimy1;
 	
 	Enimy1.speed = 5;
-	Entity_LoadImage(&Enimy1,"images/Alien.png",rend);
+	Entity_LoadImage(&Enimy1,"images/Maxi.png",rend);
 	Enimy1.rect.x = 128;
 	Enimy1.rect.y = 128;
 	
