@@ -87,7 +87,7 @@ void Entity_Update(entity *entity_ptr,SDL_Rect player_rect){
 		
 		//find path
 		if(!move){
-			findPath(ry,rx,(int)entity_ptr->rect.x/Tile_W,entity_ptr->rect.y/Tile_W,player_rect.x/Tile_W,player_rect.y/Tile_W);
+			findPath(ry,rx,(int)entity_ptr->rect.x/Tile_W,entity_ptr->rect.y/Tile_H,player_rect.x/Tile_W,player_rect.y/Tile_H);
 			for(int x=0;x<room_w;x++){
 				for(int y=0;y<room_h;y++){
 					if (room_array[map[ry][rx]].data[x][y] == 0){
@@ -111,28 +111,38 @@ void Entity_Update(entity *entity_ptr,SDL_Rect player_rect){
 	}else{
 		bool reached_x,reached_y = false;
 		//move x to path[path_pos].x
-		int x_dist = path[entity_ptr->path_pos].x*64-entity_ptr->rect.x;
+		int x_dist = path[entity_ptr->path_pos].x*Tile_W-entity_ptr->rect.x;
 		int x_dirc = x_dist/abs(x_dist);
 		
-		printf("%d\n",x_dirc);
-		
-		//entity_ptr.pos.y = path[entity_ptr->path_pos].y;
-		
-		//move y to path[path_pos].y
-		/*
-		if(!(path[entity_ptr->path_pos].y==(int)(entity_ptr->rect.y)/Tile_H)){
-			int y_dist = path[entity_ptr->path_pos].y*Tile_H-entity_ptr->rect.y; //distance betwen entity.rect.y and path[path_pos].y
-			if(entity_ptr->speed<abs(y_dist)){
-				entity_ptr->rect.y += y_dist/abs(y_dist)*entity_ptr->speed;
-			}else {
-				
-				entity_ptr->rect.y = path[entity_ptr->path_pos].y*Tile_H;
-				reached_y = true;
-			}
+		if(abs(x_dist)>entity_ptr->speed){
+			entity_ptr->rect.x += x_dirc*entity_ptr->speed;//walk with speed in right x direction
+		}else{
+			entity_ptr->rect.x = path[entity_ptr->path_pos].x*Tile_W;
+			reached_x = true;
 		}
-		*/
-		if(reached_y){
-			entity_ptr->path_pos++;
+		//printf("%d %d\n",x_dirc,x_dist);
+
+		//move y to path[path_pos].y
+		int y_dist = path[entity_ptr->path_pos].y*Tile_H-entity_ptr->rect.y;
+		int y_dirc = y_dist/abs(y_dist);
+		
+		if(abs(y_dist)>entity_ptr->speed){
+			entity_ptr->rect.y += y_dirc*entity_ptr->speed;//walk with speed in right x direction
+		}else{
+			entity_ptr->rect.y = path[entity_ptr->path_pos].y*Tile_H;
+			reached_y = true;
+		}
+		
+		//printf("%d %d\n",x_dirc,x_dist);
+
+		if(reached_x&&reached_y){
+			if(entity_ptr->path_pos==path_len){
+				path_finder_succes = false;//return to other move code
+			}else{
+				entity_ptr->path_pos++;
+				reached_x = false;
+				reached_y = false;
+			}
 		}
 	}
 	//walkanimation
