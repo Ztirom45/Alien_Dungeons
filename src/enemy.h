@@ -95,14 +95,10 @@ void Entity_Update(entity *entity_ptr,SDL_Rect player_rect){
 					}else{
 						printf("#");
 					}
-					printf("%d",walked[x][y]);
+					printf("%d",walked[y][x]);
 					
 				}
 				printf("\n");
-			}
-			printf("A:%d %d\n",entity_ptr->rect.x/Tile_W,entity_ptr->rect.y/Tile_H);
-			for(int i=0;i<path_len;i++){
-				printf("%d %d\n",path[i].x,path[i].y);
 			}
 
 		}
@@ -116,18 +112,20 @@ void Entity_Update(entity *entity_ptr,SDL_Rect player_rect){
 		
 		if(abs(x_dist)>entity_ptr->speed){
 			entity_ptr->rect.x += x_dirc*entity_ptr->speed;//walk with speed in right x direction
+			reached_x = false;
 		}else{
 			entity_ptr->rect.x = path[entity_ptr->path_pos].x*Tile_W;
 			reached_x = true;
 		}
-		//printf("%d %d\n",x_dirc,x_dist);
-
+		//printf("%d\n",entity_ptr->path_pos);
+		
 		//move y to path[path_pos].y
 		int y_dist = path[entity_ptr->path_pos].y*Tile_H-entity_ptr->rect.y;
 		int y_dirc = y_dist/abs(y_dist);
 		
 		if(abs(y_dist)>entity_ptr->speed){
 			entity_ptr->rect.y += y_dirc*entity_ptr->speed;//walk with speed in right x direction
+			reached_y = false;
 		}else{
 			entity_ptr->rect.y = path[entity_ptr->path_pos].y*Tile_H;
 			reached_y = true;
