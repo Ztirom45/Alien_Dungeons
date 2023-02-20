@@ -87,6 +87,9 @@ void Entity_Update(entity *entity_ptr,SDL_Rect player_rect){
 		
 		//find path
 		if(!move){
+			setup_path();
+			printf("A:%d %d\n",entity_ptr->rect.x/Tile_W,entity_ptr->rect.y/Tile_H);
+			printf("G:%d %d\n",player_rect.x/Tile_W,player_rect.y/Tile_H);
 			findPath(ry,rx,(int)entity_ptr->rect.x/Tile_W,entity_ptr->rect.y/Tile_H,player_rect.x/Tile_W,player_rect.y/Tile_H);
 			for(int x=0;x<room_w;x++){
 				for(int y=0;y<room_h;y++){
