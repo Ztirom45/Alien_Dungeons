@@ -1,5 +1,5 @@
 # Alien_Dungeons
-a old python game rom me rewritten in C with SDL
+one of my one python games rewritten in C with SDL
 
 ![screenshot](https://github.com/Ztirom45/Alien_Dungeons/blob/main/screenshots/screenshot2.png)
 
@@ -12,5 +12,5 @@ a old python game rom me rewritten in C with SDL
 
 ##### Building (Linux only)
 
-- compile: `sh build/compile.sh`
--run: `./bin/main`
+- compile: `$ sh build/compile.sh`
+-run: `$ ./bin/main`
