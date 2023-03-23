@@ -23,6 +23,7 @@ bool findPath(int room_x,int room_y,int pos_x,int pos_y,int goal_x,int goal_y){
 	printf("%d %d\n",pos_x,pos_y);
 	if(pos_x==goal_x&&pos_y == goal_y){
 		path_len++;
+		walked[pos_x][pos_y] = 1;
 		path[path_len].x = pos_y;
 		path[path_len].y = pos_x;
 		path_finder_succes = 1;

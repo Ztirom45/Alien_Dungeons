@@ -35,6 +35,7 @@ void Entity_LoadImage(entity *entity_ptr,char* path ,SDL_Renderer* rend){
 	
 }
 
+int PathDelay;
 
 void Entity_Update(entity *entity_ptr,SDL_Rect player_rect){
 	//calculte x and y distance to player
@@ -87,21 +88,28 @@ void Entity_Update(entity *entity_ptr,SDL_Rect player_rect){
 		
 		//find path
 		if(!move){
-			setup_path();
-			printf("A:%d %d\n",entity_ptr->rect.x/Tile_W,entity_ptr->rect.y/Tile_H);
-			printf("G:%d %d\n",player_rect.x/Tile_W,player_rect.y/Tile_H);
-			findPath(ry,rx,(int)entity_ptr->rect.x/Tile_W,entity_ptr->rect.y/Tile_H,player_rect.x/Tile_W,player_rect.y/Tile_H);
-			for(int x=0;x<room_w;x++){
-				for(int y=0;y<room_h;y++){
-					if (room_array[map[ry][rx]].data[x][y] == 0){
-						printf(" ");
-					}else{
-						printf("#");
-					}
-					printf("%d",walked[y][x]);
+			if(PathDelay==0){
+				setup_path();
+				printf("A:%d %d\n",entity_ptr->rect.x/Tile_W,entity_ptr->rect.y/Tile_H);
+				printf("G:%d %d\n",player_rect.x/Tile_W,player_rect.y/Tile_H);
+				findPath(ry,rx,(int)entity_ptr->rect.x/Tile_W,entity_ptr->rect.y/Tile_H,player_rect.x/Tile_W,player_rect.y/Tile_H);
+				PathDelay = 30;
+
+				for(int x=0;x<room_w;x++){
+					for(int y=0;y<room_h;y++){
+						if (room_array[map[ry][rx]].data[x][y] == 0){
+							printf(" ");
+						}else{
+							printf("#");
+						}
+						printf("%d",walked[y][x]);
 					
+					}
+					printf("\n");
 				}
-				printf("\n");
+			}else{
+				PathDelay--;
+				
 			}
 
 		}
@@ -137,7 +145,7 @@ void Entity_Update(entity *entity_ptr,SDL_Rect player_rect){
 		//printf("%d %d\n",x_dirc,x_dist);
 
 		if(reached_x&&reached_y){
-			if(entity_ptr->path_pos==path_len){
+			if(entity_ptr->path_pos>=path_len){
 				path_finder_succes = false;//return to other move code
 			}else{
 				entity_ptr->path_pos++;
