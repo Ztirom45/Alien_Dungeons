@@ -66,28 +66,28 @@ int main(int argc, char *argv[])
 	Alien_Pos.x = 0;
 	Alien_Pos.y = 0;
 	Alien_Pos.w = Alien_W;//Alien_Texture_Pos.w/IMG_MAP_W;
-	Alien_Pos.h = Alien_H;//Alien_Texture_Pos.w/IMG_MAP_H;
+	Alien_Pos.h = Alien_H;//Alien_Texture_Pos.h/IMG_MAP_H;
 
 	int frame_counter = 0;//count frames for walk animation callculation
 	
 	bool loop = true;
-	entity Enimy1;
+	entity enemy1;
 	
-	Enimy1.speed = 5;
-	Entity_LoadImage(&Enimy1,"images/Maxi.png",rend);
-	Enimy1.rect.x = 128;
-	Enimy1.rect.y = 128;
+	enemy1.speed = 5;
+	Entity_LoadImage(&enemy1,"images/Maxi.png",rend);
+	enemy1.rect.x = 128;
+	enemy1.rect.y = 128;
 	
 	while (loop) {
 		SDL_Event event;
 		
 		///game update
-			if(TOUCH_RECT(Enimy1.rect.x,Enimy1.rect.y,Enimy1.rect.x+Enimy1.rect.w,Enimy1.rect.y+Enimy1.rect.h,
+			if(TOUCH_RECT(enemy1.rect.x,enemy1.rect.y,enemy1.rect.x+enemy1.rect.w,enemy1.rect.y+enemy1.rect.h,
 						pos.x,pos.y,pos.w+pos.x,pos.h+pos.y)){
 				loop = false;
 			}
 		///entity update
-		Entity_Update(&Enimy1,pos);
+		Entity_Update(&enemy1,pos);
 		
 		///MOVE&&player update
 		//events
@@ -188,7 +188,7 @@ int main(int argc, char *argv[])
 		SDL_RenderCopy(rend,Alien_Texture,&Alien_Pos, &pos);
 
 		//DRAW ENIMES
-		Entity_Draw(&Enimy1,rend);
+		Entity_Draw(&enemy1,rend);
 		
 		// for multiple rendering
 		SDL_RenderPresent(rend);
