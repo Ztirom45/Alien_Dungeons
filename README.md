@@ -13,4 +13,4 @@ one of my one python games rewritten in C with SDL
 ##### Building (Linux only)
 
 - compile: `$ sh build/compile.sh`
--run: `$ ./bin/main`
+- run: `$ ./bin/main`
