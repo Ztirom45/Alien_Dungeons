@@ -27,6 +27,7 @@ static bool keys[256];//sizeof Uint8 cant't use non letter keys
 #include "cvec.hpp"
 #include "images.hpp"
 #include "player.hpp"
+#include "rooms.hpp"
 
 
 
@@ -71,6 +72,8 @@ int main(){
 	//player settings 
 	my_player.init("img/Alien.png");
 	
+	//rooms settings
+	my_room.init();
 	//gameloop
 	while(loop){
 		//update
@@ -80,7 +83,9 @@ int main(){
 		//draw
 		SDL_RenderClear(rend);
 		
+		my_room.draw();
 		my_player.draw();
+		
 		
 		SDL_RenderPresent(rend);
 		SDL_Delay(1000/60);//60 fps
