@@ -73,7 +73,9 @@ int main(){
 	my_player.init("img/Alien.png");
 	
 	//rooms settings
-	my_room.init();
+	map my_map;
+	my_map.init();
+	
 	//gameloop
 	while(loop){
 		//update
@@ -83,9 +85,8 @@ int main(){
 		//draw
 		SDL_RenderClear(rend);
 		
-		my_room.draw();
+		my_map.draw();
 		my_player.draw();
-		
 		
 		SDL_RenderPresent(rend);
 		SDL_Delay(1000/60);//60 fps

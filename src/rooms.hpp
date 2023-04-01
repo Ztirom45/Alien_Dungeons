@@ -1,10 +1,9 @@
 //room system liberry
 #include "room_data.hpp"
 
-
 class room{
 	public:
-		int number = 0;//room number
+		int data;
 		std::string image;
 		SDL_Rect rect_dsp;
 		SDL_Rect rect_img;
@@ -24,7 +23,8 @@ class room{
 			}
 		};
 		
-		void init(){
+		void init(int new_data){
+			data = new_data;
 			update_texture("img/tiles.png");
 		};
 		
@@ -40,7 +40,7 @@ class room{
 			
 			for(int y=0;y<Room_H;y++){
 				for(int x=0;x<Room_W;x++){
-					tile_rect_img.x = RoomData[number][x][y]*TileImgSize;
+					tile_rect_img.x = RoomData[data][x][y]*TileImgSize;
 					tile_rect_dsp.x = x*TileImgSize*Scale;
 					tile_rect_dsp.y = y*TileImgSize*Scale;
 					SDL_RenderCopy(rend,textures[image],&tile_rect_img, &tile_rect_dsp);
@@ -48,5 +48,29 @@ class room{
 			}
 		};
 };
+class map{
+	public:
+		int room_array_data[3][3] = {
+			{0,0,0},
+			{0,0,0},
+			{0,0,0}
+		};
+		
+		room room_array[3][3];
+		
+		vec2i pos = {1,1};
+		
+		void init(){
+			for(int x=0;x<3;x++){
+				for(int y=0;y<3;y++){
+					room_array[x][y].init(room_array_data[x][y]);
+				}
+			}
+		};
+		
+		void draw(){
+			room_array[pos.x][pos.y].draw();
+		}
+};
 
-static room my_room;
+static map my_map;

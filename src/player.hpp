@@ -46,7 +46,7 @@ class player{
 		}
 		if(keys[KEY_A]&&rect_dsp.x>0){
 			rect_dsp.x -=speed;
-		}else if(keys[KEY_D]&&rect_dsp.x+rect_dsp.w<WIN_W){
+		}if(keys[KEY_D]&&rect_dsp.x+rect_dsp.w<WIN_W){
 			rect_dsp.x +=speed;
 		}
 		
