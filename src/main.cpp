@@ -26,6 +26,7 @@ static bool keys[256];//sizeof Uint8 cant't use non letter keys
 #include "config.hpp"
 #include "cvec.hpp"
 #include "images.hpp"
+#include "player.hpp"
 
 
 
@@ -41,12 +42,50 @@ void init(){
 	load_images();
 }
 
+void events(){
+		//events
+		SDL_Event event;
+		const Uint8 *keyboard_state_array = SDL_GetKeyboardState(NULL);
+		while (SDL_PollEvent(&event)) {
+			switch (event.type) {
+
+			case SDL_QUIT:
+				loop = false;
+				break;
+			case SDL_KEYDOWN:
+				if(event.key.keysym.sym<256){keys[event.key.keysym.sym] = true;}
+				break;
+			case SDL_KEYUP:
+				if(event.key.keysym.sym<256){keys[event.key.keysym.sym] = false;}
+				break;
+			default:
+				break;
+			}
+		}
+}
 
 int main(){
+	//init
 	init();
+	
+	//player settings 
+	my_player.init("img/Alien.png");
+	
+	//gameloop
 	while(loop){
+		//update
+		events();
+		my_player.update();
 		
+		//draw
+		SDL_RenderClear(rend);
+		
+		my_player.draw();
+		
+		SDL_RenderPresent(rend);
+		SDL_Delay(1000/60);//60 fps
 	}
+	//destory memory stuff
 	distroy_images();
 	SDL_Quit();
 }
