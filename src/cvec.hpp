@@ -42,16 +42,6 @@ typedef struct _vec2f{
 	float z;
 }vec2f;
 
-//cvec functions(create vector from ints/floats)
-vec4i cvec4i(int w,int x,int y,int z)			{vec4i v = {w,x,y,z};return v;}
-vec4f cvec4f(float w,float x,float y,float z)	{vec4f v = {w,x,y,z};return v;}
-
-vec3i cvec3i(int x,int y,int z)					{vec3i v = {x,y,z};return v;}
-vec3f cvec3f(float x,float y,float z)			{vec3f v = {x,y,z};return v;}
-
-vec2i cvec2i(int x,int y)						{vec2i v = {x,y};return v;}
-vec2f cvec2f(float x,float y)					{vec2f v = {x,y};return v;}
-
 //3drotate functions
 vec3f rotateX(vec3f pos,float angle){
         //determines radians
@@ -116,9 +106,9 @@ vec3f rotate(vec3f pos, vec3f angle){
 }
 
 vec3f RotateInPlayerPerspective(vec3f pos, vec3f angle){//no z fix
-	return rotate(pos,cvec3f(90+angle.x,-angle.y+180,0));
+	return rotate(pos,{90+angle.x,-angle.y+180,0});
 }
 
 vec3f RotatePlayerDistance(float distance, vec3f angle){
-	return RotateInPlayerPerspective(cvec3f(0,distance,0),angle);
+	return RotateInPlayerPerspective({0,distance,0},angle);
 }
