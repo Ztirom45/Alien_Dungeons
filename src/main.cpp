@@ -26,8 +26,8 @@ static bool keys[256];//sizeof Uint8 cant't use non letter keys
 #include "config.hpp"
 #include "cvec.hpp"
 #include "images.hpp"
-#include "player.hpp"
 #include "rooms.hpp"
+#include "player.hpp"
 
 
 
@@ -73,7 +73,6 @@ int main(){
 	my_player.init("img/Alien.png");
 	
 	//rooms settings
-	map my_map;
 	my_map.init();
 	
 	//gameloop

@@ -38,16 +38,38 @@ class player{
 	
 	void update(){
 		//control
-		if(keys[KEY_W]&&rect_dsp.y>0){
+		if(keys[KEY_W]){
+			if(rect_dsp.y<=0){
+				rect_dsp.y=WIN_H-1;
+				my_map.pos.y-=1;
+				//my_map.pos.y
+			}else{
 			rect_dsp.y -=speed;
+			}
 		}
-		if(keys[KEY_S]&&rect_dsp.y+rect_dsp.h<WIN_H){
-			rect_dsp.y +=speed;
+		if(keys[KEY_S]){
+			if(rect_dsp.y>=WIN_H){
+				rect_dsp.y=1;
+				my_map.pos.y++;
+			}else{
+				rect_dsp.y +=speed;
+			}
 		}
-		if(keys[KEY_A]&&rect_dsp.x>0){
-			rect_dsp.x -=speed;
-		}if(keys[KEY_D]&&rect_dsp.x+rect_dsp.w<WIN_W){
-			rect_dsp.x +=speed;
+		if(keys[KEY_A]){
+			if(rect_dsp.x<=0){
+				my_map.pos.x--;
+				rect_dsp.x=WIN_W-1;
+			}else{
+				rect_dsp.x -=speed;
+			}
+		}
+		if(keys[KEY_D]){
+			if(rect_dsp.x>=WIN_W){
+				rect_dsp.x=1;
+				my_map.pos.x++;
+			}else{
+				rect_dsp.x +=speed;
+			}
 		}
 		
 		//lives

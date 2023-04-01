@@ -51,9 +51,9 @@ class room{
 class map{
 	public:
 		int room_array_data[3][3] = {
-			{0,0,0},
-			{0,0,0},
-			{0,0,0}
+			{0,1,2},
+			{3,4,5},
+			{6,7,8}
 		};
 		
 		room room_array[3][3];
