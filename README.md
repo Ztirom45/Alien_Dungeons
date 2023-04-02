@@ -1,5 +1,5 @@
 # Alien_Dungeons
-one of my one python games rewritten in C with SDL
+one of my one python games rewritten in C++ with SDL
 
 ![screenshot](https://github.com/Ztirom45/Alien_Dungeons/blob/main/screenshots/screenshot2.png)
 
