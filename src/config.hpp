@@ -22,3 +22,6 @@
 
 #define Scale 4
 
+//Animation
+#define AnimationFPS 8//AnimationFrames per secount
+#define AnimationFrameCount 3//count of AnimationFrames
