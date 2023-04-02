@@ -29,6 +29,7 @@ static bool keys[256];//sizeof Uint8 cant't use non letter keys
 #include "images.hpp"
 #include "rooms.hpp"
 #include "player.hpp"
+#include "entity.hpp"
 
 
 
@@ -73,6 +74,9 @@ int main(){
 	//player settings 
 	my_player.init("img/Alien.png");
 	
+	//enemy settings 
+	my_enemy.init("img/Alien.png");
+	
 	//rooms settings
 	my_map.init();
 	
@@ -81,12 +85,14 @@ int main(){
 		//update
 		events();
 		my_player.update();
+		my_enemy.update();
 		
 		//draw
 		SDL_RenderClear(rend);
 		
 		my_map.draw();
 		my_player.draw();
+		my_enemy.draw();
 		
 		SDL_RenderPresent(rend);
 		SDL_Delay(1000/60);//60 fps
