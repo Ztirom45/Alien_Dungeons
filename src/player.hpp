@@ -22,8 +22,8 @@ class player{
 	}
 	
 	void init(std::string new_costume){
-		rect_dsp.x = 0;
-		rect_dsp.y = 0;
+		rect_dsp.x = 256;
+		rect_dsp.y = 256;
 		rect_img.x = 0;
 		rect_img.y = 0;
 		update_texture(new_costume,{0,0});
@@ -44,29 +44,41 @@ class player{
 			}
 		}
 	}
-	
 	void update(){
 		//control
 		walked = false;
+		int RoomNow	= my_map.room_array[my_map.pos.x][my_map.pos.y].data;
+		
 		if(keys[KEY_W]){
-			if(rect_dsp.y<=0){
+			if(rect_dsp.y-speed<=0){//border
 				rect_dsp.y=WIN_H-1;
 				my_map.pos.y-=1;
 				//my_map.pos.y
 			}else{
-			rect_dsp.y -=speed;
-			rect_img.y = 3*rect_img.h;//row 3
-			walked = true;
+				if(
+				RoomData[RoomNow][(rect_dsp.x)/TileImgSize/Scale][(rect_dsp.y-speed)/TileImgSize/Scale]!=2&&
+				RoomData[RoomNow][(rect_dsp.x+rect_dsp.w)/TileImgSize/Scale][(rect_dsp.y-speed)/TileImgSize/Scale]!=2
+				){//block colision
+						rect_dsp.y -=speed;
+						rect_img.y = 3*rect_img.h;//row 3
+						walked = true;
+				}
 			}
 		}
 		if(keys[KEY_S]){
-			if(rect_dsp.y>=WIN_H){
+			if(rect_dsp.y+rect_dsp.w+speed>=WIN_H){//border
 				rect_dsp.y=1;
 				my_map.pos.y++;
 			}else{
-				rect_dsp.y +=speed;
-				rect_img.y = 0;//row 0
-				walked = true;
+				if(
+				(RoomData[RoomNow][(rect_dsp.x)/TileImgSize/Scale][(rect_dsp.y+rect_dsp.h+speed)/TileImgSize/Scale]!=2&&
+				 RoomData[RoomNow][(rect_dsp.x+rect_dsp.w)/TileImgSize/Scale][(rect_dsp.y+rect_dsp.h+speed)/TileImgSize/Scale]!=2)
+				||(float)(rect_dsp.y+rect_dsp.h+speed)/TileImgSize/Scale>15.5
+				){//block colision
+					rect_dsp.y +=speed;
+					rect_img.y = 0;//row 0
+					walked = true;
+				}
 			}
 		}
 		if(keys[KEY_A]){
@@ -74,9 +86,14 @@ class player{
 				my_map.pos.x--;
 				rect_dsp.x=WIN_W-1;
 			}else{
-				rect_dsp.x -=speed;
-				rect_img.y = rect_img.h;//row 1
-				walked = true;
+				if(
+					RoomData[RoomNow][(rect_dsp.x-speed)/TileImgSize/Scale][(rect_dsp.y)/TileImgSize/Scale]!=2&&
+					RoomData[RoomNow][(rect_dsp.x-speed)/TileImgSize/Scale][(rect_dsp.y+rect_dsp.h)/TileImgSize/Scale]!=2
+					){//block colision
+					rect_dsp.x -=speed;
+					rect_img.y = rect_img.h;//row 1
+					walked = true;
+				}
 			}
 		}
 		if(keys[KEY_D]){
@@ -84,9 +101,14 @@ class player{
 				rect_dsp.x=1;
 				my_map.pos.x++;
 			}else{
-				rect_dsp.x +=speed;
-				rect_img.y = 2*rect_img.h;//row 2
-				walked = true;
+				if(
+				(RoomData[RoomNow][(rect_dsp.x+rect_dsp.w+speed)/TileImgSize/Scale][(rect_dsp.y)/TileImgSize/Scale]!=2&&
+				 RoomData[RoomNow][(rect_dsp.x+rect_dsp.w+speed)/TileImgSize/Scale][(rect_dsp.y+rect_dsp.h)/TileImgSize/Scale]!=2)
+				||((float)(rect_dsp.x+rect_dsp.w+speed)/TileImgSize/Scale)>16.0){
+					rect_dsp.x +=speed;
+					rect_img.y = 2*rect_img.h;//row 2
+					walked = true;
+				}
 			}
 		}
 		
