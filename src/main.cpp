@@ -29,7 +29,9 @@ static bool keys[256];//sizeof Uint8 cant't use non letter keys
 #include "images.hpp"
 #include "rooms.hpp"
 #include "player.hpp"
+#include "path_finder.hpp"
 #include "entity.hpp"
+
 
 
 

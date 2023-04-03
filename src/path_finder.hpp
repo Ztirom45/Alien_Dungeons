@@ -1,59 +1,62 @@
-#include <SDL2/SDL.h>
-#include <stdbool.h>
-
-#include "config.h"
-#include "cvec.h"
-
-static int path_len = 3564;
-static vec2i path[room_w*room_h];
-static bool walked[room_w][room_h];
-static bool path_finder_succes;
-
-void setup_path(){
-	path_len = 0;
-	path_finder_succes = 0;
-	for(int xi;xi<room_w;xi++){
-		for(int yj;yj<room_h;yj++){
-			walked[xi][yj] = false;
+class path_finder{
+	public:
+		std::vector<vec2i> path;
+		bool walked[Room_W][Room_W] = {0};
+		vec2i goal = {0,0};
+		int (*room_pointer)[Room_W][Room_W];
+		int room_now = 0;
+		
+		void reset(vec2i new_goal,int new_room_now){
+			goal = new_goal;
+			room_now = new_room_now;
+			path.resize(0);
+			for(int x=0;x<Room_W;x++){
+				for(int y=0;y<Room_H;y++){
+					walked[x][y] = 0;
+				}
+			}
+		};
+		
+		void print_walked(){
+			for(int x=0;x<Room_W;x++){
+				for(int y=0;y<Room_H;y++){
+					printf("%d",walked[x][y]);
+					
+					if(RoomData[room_now][x][y]==0){
+						printf(" ");
+					}else{
+						printf("#");
+					}
+				}
+				printf("\n");
+			}
+		};
+		
+		void add(vec2i val){
+			path.resize(path.size()+1);
+			path[path.size()-1] = val;
 		}
-	}
-}
-
-bool findPath(int room_x,int room_y,int pos_x,int pos_y,int goal_x,int goal_y){
-	if(room_array[map[room_x][room_y]].data[pos_x][pos_y]==0&&pos_x<room_w&&pos_y<room_h&&pos_x>=0&&pos_y>=0){
-		printf("%d\n",walked[pos_x][pos_y]);
-		
-		if(walked[pos_x][pos_y]==1){
-			return 0;
+		void remove(){
+			path.resize(path.size()-1);
 		}
-		printf("hi\n");
-		walked[pos_x][pos_y] = 1;
-		
-		path_len++;
-		
-		printf("%d %d\n",pos_x,pos_y);
-		if(pos_x==goal_x&&pos_y == goal_y){
+		bool find_path(int x,int y){
+			//checks if this feld was visited by the pathfinder
+			if(walked[x][y]){
+				return 0;
+			}
+			walked[x][y] = true;
 			
-			walked[pos_x][pos_y] = 1;
-			path[path_len].x = pos_y;
-			path[path_len].y = pos_x;
-			path_finder_succes = 1;
-			return 1;
+			//add pos to path
+			add({x,y});
+			
+			//checks if this is the goal
+			if(x==goal.x&&y==goal.y){
+				return 1;
+			}
+			//check if this is a wall
+			if(RoomData[room_now][x][y]){
+				return 0;
+			}
+			
 		}
-		
-		path[path_len].x = pos_x;
-		path[path_len].y = pos_y;
-		
-		int x_dirc = (pos_x-goal_x)<0 ? 1 : -1;//x direction
-		int y_dirc = (pos_y-goal_y)<0 ? 1 : -1;//y direction
-		
-		if(findPath(room_x,room_y, pos_x,pos_y+y_dirc,goal_x,goal_y) == 1){return 1;}
-		if(findPath(room_x,room_y, pos_x+x_dirc,pos_y,goal_x,goal_y) == 1){return 1;}
-		if(findPath(room_x,room_y, pos_x,pos_y-y_dirc,goal_x,goal_y) == 1){return 1;}
-		if(findPath(room_x,room_y, pos_x-x_dirc,pos_y,goal_x,goal_y) == 1){return 1;}
-		
-		path_len--;//if ther isn't a return 1
-	}else{
-		return 0;
-	}
-}
+};

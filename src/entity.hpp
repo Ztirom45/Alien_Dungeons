@@ -7,7 +7,8 @@ class entity{
 		int speed = 2;
 		int AnimationFrame = 0;//tick Counter
 		bool walked = false;//true if the player walked
-	
+		
+		
 	void update_texture(std::string new_costume,vec2i pos){
 		costume = new_costume;
 		SDL_QueryTexture(textures[costume], NULL, NULL, &rect_img.w, &rect_img.h);
