@@ -7,7 +7,7 @@ one of my one python games rewritten in C++ with SDL
 
 - room system
 - animation system
-- (path finder)
+- path finder
 
 
 ##### Building (Linux only)
