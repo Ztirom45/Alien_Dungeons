@@ -89,7 +89,7 @@ class entity{
 			walked = true;
 		}
 		
-		if(rect_dsp.x==goal.x||rect_dsp.y==goal.y){
+		if(rect_dsp.x==goal.x&&rect_dsp.y==goal.y){
 			if(path_pos!=pf.path.size()-1){
 				path_pos++;
 			}
