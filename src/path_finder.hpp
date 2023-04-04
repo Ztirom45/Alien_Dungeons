@@ -53,17 +53,20 @@ class path_finder{
 			}
 			walked[x][y] = true;
 			
+
+
+			//check if this is a wall
+			if(RoomData[room_now][x][y]==2){
+				return 0;
+			}
+			
 			//add pos to path
 			add({x,y});
-			
 			//checks if this is the goal
 			if(x==goal.x&&y==goal.y){
 				return 1;
 			}
-			//check if this is a wall
-			if(RoomData[room_now][x][y]){
-				return 0;
-			}
+
 			
 			
 			//select direction witch will be cheacked first to 1/-1

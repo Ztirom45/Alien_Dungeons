@@ -12,6 +12,7 @@ class entity{
 		
 		path_finder pf;
 		int path_pos = 0;
+		vec2i LastPlayerPos = {0,0};
 		
 	void update_texture(std::string new_costume,vec2i pos){
 		costume = new_costume;
@@ -79,7 +80,6 @@ class entity{
 		}
 		//Left
 		if(rect_dsp.x>goal.x){
-			//printf("hi %d %d\n",rect_dsp.x,goal.x);
 			if(rect_dsp.x-goal.x>speed){
 				rect_dsp.x -=speed;
 			}else{
@@ -89,9 +89,8 @@ class entity{
 			walked = true;
 		}
 		
-		//printf("%d %d\n",rect_dsp.x,rect_dsp.y);
 		if(rect_dsp.x==goal.x||rect_dsp.y==goal.y){
-			if(path_pos==pf.path.size()-1){
+			if(path_pos!=pf.path.size()-1){
 				path_pos++;
 			}
 		}
@@ -109,13 +108,31 @@ class entity{
 			}
 		}
 	}
+	
 	void update(){
 		//find path
-		path_pos = 1;
-		pf.reset({my_player.rect_dsp.x/Scale/TileImgSize,my_player.rect_dsp.y/Scale/TileImgSize},my_map.room_array_data[my_map.pos.x][my_map.pos.y]);
-		if(pf.find_path(rect_dsp.x/Scale/TileImgSize,rect_dsp.y/Scale/TileImgSize)){
-			//pf.print_walked();
+		
+		//find_path() only if player updated position
+		if(my_player.rect_dsp.x/Scale/TileImgSize!=LastPlayerPos.x
+		 ||my_player.rect_dsp.y/Scale/TileImgSize!=LastPlayerPos.y){
+			path_pos = 1;
+			pf.reset({my_player.rect_dsp.x/Scale/TileImgSize,my_player.rect_dsp.y/Scale/TileImgSize},my_map.room_array_data[my_map.pos.x][my_map.pos.y]);
+			pf.find_path(rect_dsp.x/Scale/TileImgSize,rect_dsp.y/Scale/TileImgSize);
+			LastPlayerPos.x = my_player.rect_dsp.x/Scale/TileImgSize;
+			LastPlayerPos.y = my_player.rect_dsp.y/Scale/TileImgSize;
 		}
+		
+		
+		//visuallistion
+		for(int i=0;i<pf.path.size();i++){
+			SDL_Rect r;
+			r.x = pf.path[i].x*Scale*TileImgSize;
+			r.y = pf.path[i].y*Scale*TileImgSize;
+			r.w = 20;
+			r.h = 20;
+			SDL_RenderCopy(rend,textures[costume],&rect_img, &r);
+		}
+		
 		
 		follow_path();
 	

@@ -87,14 +87,15 @@ int main(){
 		//update
 		events();
 		my_player.update();
-		my_enemy.update();
 		
 		//draw
 		SDL_RenderClear(rend);
 		
 		my_map.draw();
 		my_player.draw();
+		my_enemy.update();
 		my_enemy.draw();
+		
 		
 		SDL_RenderPresent(rend);
 		SDL_Delay(1000/60);//60 fps
