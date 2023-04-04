@@ -12,5 +12,5 @@ one of my one python games rewritten in C++ with SDL
 
 ##### Building (Linux only)
 
-- compile: `$ sh build/compile.sh`
+- compile: `$ make`
 - run: `$ ./bin/main`
