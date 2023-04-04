@@ -2,12 +2,15 @@ class entity{
 	public:
 		SDL_Rect rect_dsp;	//size and pos on display
 		SDL_Rect rect_img;	//pixel positions in images
+		
 		std::string costume;//texture array
 		int lives = 10;
 		int speed = 2;
+		
 		int AnimationFrame = 0;//tick Counter
 		bool walked = false;//true if the player walked
 		
+		path_finder pf;
 		
 	void update_texture(std::string new_costume,vec2i pos){
 		costume = new_costume;
@@ -50,6 +53,7 @@ class entity{
 		walked = false;
 		int RoomNow	= my_map.room_array[my_map.pos.x][my_map.pos.y].data;
 		
+		if(1){
 		//Up
 		if(rect_dsp.y>my_player.rect_dsp.y){
 			if(
@@ -75,7 +79,7 @@ class entity{
 			}
 		}
 		
-		//left
+		//Left
 		if(rect_dsp.x>my_player.rect_dsp.x){
 				if(
 					RoomData[RoomNow][(rect_dsp.x-speed)/TileImgSize/Scale][(rect_dsp.y)/TileImgSize/Scale]!=2&&
@@ -98,6 +102,15 @@ class entity{
 			}
 		}
 		
+		if(1){
+			pf.reset({my_player.rect_dsp.x/Scale/TileImgSize,my_player.rect_dsp.y/Scale/TileImgSize},my_map.room_array_data[my_map.pos.x][my_map.pos.y]);
+			if(pf.find_path(rect_dsp.x/Scale/TileImgSize,rect_dsp.y/Scale/TileImgSize)){
+				pf.print_walked();
+			}
+		}
+		}else{
+
+		}
 		
 		//lives
 		if(lives<=0){

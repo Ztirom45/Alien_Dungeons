@@ -18,11 +18,13 @@ class path_finder{
 		};
 		
 		void print_walked(){
-			for(int x=0;x<Room_W;x++){
-				for(int y=0;y<Room_H;y++){
+			for(int y=0;y<Room_H;y++){
+				for(int x=0;x<Room_W;x++){
 					printf("%d",walked[x][y]);
 					
-					if(RoomData[room_now][x][y]==0){
+					if(x==goal.x&&y==goal.y){
+						printf("X");
+					}else if(RoomData[room_now][x][y]==0){
 						printf(" ");
 					}else{
 						printf("#");
@@ -41,6 +43,10 @@ class path_finder{
 		}
 		
 		bool find_path(int x,int y){
+			//checks if this feld is insite the array
+			if(x<0||y<0||x>=Room_W||y>=Room_H){
+				return 0;
+			}
 			//checks if this feld was visited by the pathfinder
 			if(walked[x][y]){
 				return 0;
@@ -76,5 +82,6 @@ class path_finder{
 				if(find_path(x		,y-Yplus)){return 1;}
 				if(find_path(x-Xplus,y		)){return 1;}
 			}
+			return 0;
 		};
 };
