@@ -11,6 +11,7 @@ class entity{
 		bool walked = false;//true if the player walked
 		
 		path_finder pf;
+		int path_pos = 0;
 		
 	void update_texture(std::string new_costume,vec2i pos){
 		costume = new_costume;
@@ -26,8 +27,8 @@ class entity{
 	}
 	
 	void init(std::string new_costume){
-		rect_dsp.x = 256;
-		rect_dsp.y = 256;
+		rect_dsp.x = 2*256;
+		rect_dsp.y = 2*256;
 		rect_img.x = 0;
 		rect_img.y = 0;
 		update_texture(new_costume,{0,0});
@@ -35,6 +36,66 @@ class entity{
 	
 	void draw(){
 		SDL_RenderCopy(rend,textures[costume],&rect_img, &rect_dsp);
+	};
+	
+	void follow_path(){
+		vec2i goal = pf.path[path_pos];
+		goal.x *= Scale*TileImgSize;
+		goal.y *= Scale*TileImgSize;
+		
+		walked = false;
+		
+		//Down
+		if(rect_dsp.y<goal.y){
+			if(rect_dsp.y-goal.y<-speed){
+				rect_dsp.y +=speed;
+			}else{
+				rect_dsp.y = goal.y;
+			}
+			rect_img.y = 0;//row 0
+			walked = true;
+		}
+		
+		
+		//Up
+		if(rect_dsp.y>goal.y){
+			if(rect_dsp.y-goal.y>speed){
+				rect_dsp.y -=speed;
+			}else{
+				rect_dsp.y = goal.y;
+			}
+			rect_img.y = 3*rect_img.h;//row 3
+			walked = true;
+		}
+		//Right
+		if(rect_dsp.x<goal.x){
+			if(rect_dsp.x-goal.x<-speed){
+				rect_dsp.x += speed;
+			}else{
+				rect_dsp.x = goal.x;
+			}
+			rect_img.y = 2*rect_img.h;//row 2
+			walked = true;
+		}
+		//Left
+		if(rect_dsp.x>goal.x){
+			//printf("hi %d %d\n",rect_dsp.x,goal.x);
+			if(rect_dsp.x-goal.x>speed){
+				rect_dsp.x -=speed;
+			}else{
+				rect_dsp.x = goal.x;
+			}
+			rect_img.y = rect_img.h;//row 1
+			walked = true;
+		}
+		
+		//printf("%d %d\n",rect_dsp.x,rect_dsp.y);
+		if(rect_dsp.x==goal.x||rect_dsp.y==goal.y){
+			if(path_pos==pf.path.size()-1){
+				path_pos++;
+			}
+		}
+		
 	};
 	
 	void walk(bool var){
@@ -49,69 +110,15 @@ class entity{
 		}
 	}
 	void update(){
-		//control
-		walked = false;
-		int RoomNow	= my_map.room_array[my_map.pos.x][my_map.pos.y].data;
-		
-		if(1){
-		//Up
-		if(rect_dsp.y>my_player.rect_dsp.y){
-			if(
-			RoomData[RoomNow][(rect_dsp.x)/TileImgSize/Scale][(rect_dsp.y-speed)/TileImgSize/Scale]!=2&&
-			RoomData[RoomNow][(rect_dsp.x+rect_dsp.w)/TileImgSize/Scale][(rect_dsp.y-speed)/TileImgSize/Scale]!=2
-			){//block colision
-					rect_dsp.y -=speed;
-					rect_img.y = 3*rect_img.h;//row 3
-					walked = true;
-			}
+		//find path
+		path_pos = 1;
+		pf.reset({my_player.rect_dsp.x/Scale/TileImgSize,my_player.rect_dsp.y/Scale/TileImgSize},my_map.room_array_data[my_map.pos.x][my_map.pos.y]);
+		if(pf.find_path(rect_dsp.x/Scale/TileImgSize,rect_dsp.y/Scale/TileImgSize)){
+			//pf.print_walked();
 		}
 		
-		//Down
-		if(rect_dsp.y<my_player.rect_dsp.y){
-			if(
-			(RoomData[RoomNow][(rect_dsp.x)/TileImgSize/Scale][(rect_dsp.y+rect_dsp.h+speed)/TileImgSize/Scale]!=2&&
-			 RoomData[RoomNow][(rect_dsp.x+rect_dsp.w)/TileImgSize/Scale][(rect_dsp.y+rect_dsp.h+speed)/TileImgSize/Scale]!=2)
-			||(float)(rect_dsp.y+rect_dsp.h+speed)/TileImgSize/Scale>15.5
-			){//block colision
-				rect_dsp.y +=speed;
-				rect_img.y = 0;//row 0
-				walked = true;
-			}
-		}
-		
-		//Left
-		if(rect_dsp.x>my_player.rect_dsp.x){
-				if(
-					RoomData[RoomNow][(rect_dsp.x-speed)/TileImgSize/Scale][(rect_dsp.y)/TileImgSize/Scale]!=2&&
-					RoomData[RoomNow][(rect_dsp.x-speed)/TileImgSize/Scale][(rect_dsp.y+rect_dsp.h)/TileImgSize/Scale]!=2
-					){//block colision
-					rect_dsp.x -= speed;
-					rect_img.y = rect_img.h;//row 1
-					walked = true;
-				}
-		}
-		//Right
-		if(rect_dsp.x<my_player.rect_dsp.x){
-			if(
-			(RoomData[RoomNow][(rect_dsp.x+rect_dsp.w+speed)/TileImgSize/Scale][(rect_dsp.y)/TileImgSize/Scale]!=2&&
-			 RoomData[RoomNow][(rect_dsp.x+rect_dsp.w+speed)/TileImgSize/Scale][(rect_dsp.y+rect_dsp.h)/TileImgSize/Scale]!=2)
-			||((float)(rect_dsp.x+rect_dsp.w+speed)/TileImgSize/Scale)>16.0){
-				rect_dsp.x +=speed;
-				rect_img.y = 2*rect_img.h;//row 2
-				walked = true;
-			}
-		}
-		
-		if(1){
-			pf.reset({my_player.rect_dsp.x/Scale/TileImgSize,my_player.rect_dsp.y/Scale/TileImgSize},my_map.room_array_data[my_map.pos.x][my_map.pos.y]);
-			if(pf.find_path(rect_dsp.x/Scale/TileImgSize,rect_dsp.y/Scale/TileImgSize)){
-				pf.print_walked();
-			}
-		}
-		}else{
-
-		}
-		
+		follow_path();
+	
 		//lives
 		if(lives<=0){
 			loop = false;
