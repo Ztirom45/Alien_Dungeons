@@ -39,6 +39,7 @@ class path_finder{
 		void remove(){
 			path.resize(path.size()-1);
 		}
+		
 		bool find_path(int x,int y){
 			//checks if this feld was visited by the pathfinder
 			if(walked[x][y]){
@@ -58,5 +59,22 @@ class path_finder{
 				return 0;
 			}
 			
-		}
+			
+			//select direction witch will be cheacked first to 1/-1
+			int Xplus = (goal.x>x)*2-1;
+			int Yplus = (goal.y>y)*2-1;
+			
+			//run findpath LEFT RIGHT UP DOWN
+			if(abs(goal.x-x)>abs(goal.y-y)){
+				if(find_path(x+Xplus,y		)){return 1;}
+				if(find_path(x		,y+Yplus)){return 1;}
+				if(find_path(x-Xplus,y		)){return 1;}
+				if(find_path(x		,y-Yplus)){return 1;}
+			}else{
+				if(find_path(x		,y+Yplus)){return 1;}
+				if(find_path(x+Xplus,y		)){return 1;}
+				if(find_path(x		,y-Yplus)){return 1;}
+				if(find_path(x-Xplus,y		)){return 1;}
+			}
+		};
 };
