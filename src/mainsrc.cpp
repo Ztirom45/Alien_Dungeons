@@ -7,7 +7,6 @@
 #include <glad/glad.h>
 
 #include <glm/glm.hpp>
-#include <glm/trigonometric.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/ext.hpp>
 
@@ -45,8 +44,8 @@ static GLuint VertexArrayObject2;//color of vertex
 static GLuint VertexBufferObject;
 static GLuint VertexBufferObject2;
 
-//please make a class
-static glm::vec3 CameraPos = glm::vec3(0.0f,0.0f,1.0f);
+//something
+static float offset = 0;
 
 #include "shader.hpp"
 
@@ -177,12 +176,13 @@ void events(){//get input events
 }
 
 void Input(){//do stuff with keybord inputs
-	std::cout << CameraPos.z << "\n";
 	if(keys[KEY_W]){
-		CameraPos.z += 0.01;
+		std::cout << "offset" << offset <<"\n";
+		offset+=0.01f;
 	}
 	if(keys[KEY_S]){
-		CameraPos.z -= 0.01;
+		std::cout << "offset" << offset <<"\n";
+		offset-=0.01f;
 	}
 }
 
@@ -191,6 +191,17 @@ void clean(){
 	
 	SDL_Quit();
 
+}
+
+void SendUniform1f(float Uvar,std::string UvarString){
+	//send stuff to GPU:
+	GLint location = glGetUniformLocation(ShaderObject.ShaderProgramm,UvarString.c_str());
+	if(location>=0){
+		//std::cout  << " Locate " << UvarString << " at:" << location << "\n";
+		glUniform1f(location,Uvar);
+	}else{
+		std::cout << "error: couldn't find a " << UvarString << "\n";
+	}
 }
 
 void pre_draw(){
@@ -203,44 +214,7 @@ void pre_draw(){
 	
 	glUseProgram(ShaderObject.ShaderProgramm);
 	
-	
-	//transformation
-	GLint ModelMatrixLocation = glGetUniformLocation(ShaderObject.ShaderProgramm,"ModelMatrix");
-	
-	//Transformation Matrix
-	glm::mat4 translate = glm::translate(glm::mat4(1.0f),CameraPos);
-	
-	if(ModelMatrixLocation>=0){
-		glUniformMatrix4fv(ModelMatrixLocation,1,GL_FALSE,&translate[0][0]);
-	}else{
-		std::cout << "error: couldn't find Perspection\n";
-	}
-	
-	
-	//Projektion in perspective
-	GLint PerspectiveLocation = glGetUniformLocation(ShaderObject.ShaderProgramm,"Perspecive");
-	
-	//Projetion Matrix
-	glm::mat4 perspective = glm::perspective(glm::radians(45.0f),//FOW 
-														(float)Win_W/Win_H,//wight-hight rate
-														0.1f,//nearst point to see
-														10.0f);//far awayst point to see
-	for(int i=0;i<4;i++){
-		std::cout << perspective[i][0]<< " " << perspective[i][1]<< " "<< perspective[i][2]<< " "<< perspective[i][3] <<"\n";
-	}
-	std::cout <<"\n";
-	for(int i=0;i<4;i++){
-		std::cout << translate[i][0]<< " " << translate[i][1]<< " "<< translate[i][2]<< " "<< translate[i][3] <<"\n";
-	}
-	
-	
-	if(ModelMatrixLocation>=0){
-		glUniformMatrix4fv(PerspectiveLocation,1,GL_FALSE,&perspective[0][0]);
-	}else{
-		std::cout << "error: couldn't find perspective\n";
-		//exit(EXIT_FAILURE);
-	}
-	
+	SendUniform1f(offset,"offset");
 }
 
 void draw(){
