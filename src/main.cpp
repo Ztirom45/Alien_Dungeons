@@ -22,16 +22,9 @@
 #define Win_W 1024
 #define Win_H 780
 
-//keys
-#define KEY_W 119
-#define KEY_A 97
-#define KEY_S 115
-#define KEY_D 100
-#define KEY_SPACE 32
-
 //static vars
 static bool loop = true;
-static bool keys[256];//sizeof Uint8 cant't use non letter keys
+static bool keys[1073741824] = {0};//(2^30)
 
 //Win vars
 static SDL_Window* screen;
@@ -45,10 +38,98 @@ static GLuint VertexArrayObject2;//color of vertex
 static GLuint VertexBufferObject;
 static GLuint VertexBufferObject2;
 
-//please make a class
-static glm::vec3 CameraPos = glm::vec3(0.0f,0.0f,1.0f);
+static std::vector<GLfloat>	vertex_pos = {
+	//	x	y	z
+		-1,	-1,	-1,
+		-1,	1,	-1,
+		1,	1,	-1,
+		-1,	-1,	-1,
+		1,	-1,	-1,
+		1,	1,	-1,
+		
+		-1	,-1,	-1,
+		-1	,-1,	1,
+		-1	,1,	1,
+		-1	,-1,	-1,
+		-1	,1,	-1,
+		-1	,1,	1,
+		
+		-1,	-1,	-1,
+		-1,	-1,	1,
+		1,	-1,	1,
+		-1,	-1,	-1,
+		1,	-1,	-1,
+		1,	-1,	1,
+		
+		-1,	-1,	1,
+		-1,	1,	1,
+		1,	1,	1,
+		-1,	-1,	1,
+		1,	-1,	1,
+		1,	1,	1,
+		
+		1	,-1,	-1,
+		1	,-1,	1,
+		1	,1,	1,
+		1	,-1,	-1,
+		1	,1,	-1,
+		1	,1,	1,
+		
+		-1,	1,	-1,
+		-1,	1,	1,
+		1,	1,	1,
+		-1,	1,	-1,
+		1,	1,	-1,
+		1,	1,	1,
+};
+
+static std::vector<GLfloat> vertex_col{
+	//   r		g		b
+		-1,	-1,	-1,
+		-1,	1,	-1,
+		1,	1,	-1,
+		-1,	-1,	-1,
+		1,	-1,	-1,
+		1,	1,	-1,
+		
+		-1	,-1,	-1,
+		-1	,-1,	1,
+		-1	,1,	1,
+		-1	,-1,	-1,
+		-1	,1,	-1,
+		-1	,1,	1,
+		
+		-1,	-1,	-1,
+		-1,	-1,	1,
+		1,	-1,	1,
+		-1,	-1,	-1,
+		1,	-1,	-1,
+		1,	-1,	1,
+		
+		-1,	-1,	1,
+		-1,	1,	1,
+		1,	1,	1,
+		-1,	-1,	1,
+		1,	-1,	1,
+		1,	1,	1,
+		
+		1	,-1,	-1,
+		1	,-1,	1,
+		1	,1,	1,
+		1	,-1,	-1,
+		1	,1,	-1,
+		1	,1,	1,
+		
+		-1,	1,	-1,
+		-1,	1,	1,
+		1,	1,	1,
+		-1,	1,	-1,
+		1,	1,	-1,
+		1,	1,	1,
+	};
 
 #include "shader.hpp"
+#include "camera.hpp"
 
 
 void GetOpenGLVersionInfo(){
@@ -92,18 +173,7 @@ void init(){
 
 void VertexInit(){
 	//data
-	const std::vector<GLfloat> vertex_pos{
-	//   x		y		z
-		-0.8f,	-0.8f,	0.0f,//vert1
-		-0.8f,	0.0f,	0.0f,//vert2
-		0.0f,-	0.8f,	0.0f //vert3
-	};
-	const std::vector<GLfloat> vertex_col{
-	//   r		g		b
-		0.8f,	0.8f,	0.0f,//vert1
-		0.8f,	0.0f,	0.0f,//vert2
-		0.0f,-	0.8f,	0.0f //vert3
-	};
+
 	
 	
 	//generate VAO
@@ -160,29 +230,60 @@ void events(){//get input events
 		const Uint8 *keyboard_state_array = SDL_GetKeyboardState(NULL);
 		while (SDL_PollEvent(&event)) {
 			switch (event.type) {
-
-			case SDL_QUIT:
-				loop = false;
-				break;
-			case SDL_KEYDOWN:
-				if(event.key.keysym.sym<256){keys[event.key.keysym.sym] = true;}
-				break;
-			case SDL_KEYUP:
-				if(event.key.keysym.sym<256){keys[event.key.keysym.sym] = false;}
-				break;
-			default:
-				break;
+				case SDL_QUIT:
+					loop = false;
+					break;
+				case SDL_KEYDOWN:
+					keys[event.key.keysym.sym] = true;
+					break;
+				case SDL_KEYUP:
+					keys[event.key.keysym.sym] = false;
+					break;
+				default:
+					break;
 			}
 		}
 }
 
 void Input(){//do stuff with keybord inputs
-	std::cout << CameraPos.z << "\n";
-	if(keys[KEY_W]){
-		CameraPos.z += 0.01;
+	
+	std::cout << CameraObject.rotation.y << " , "<< CameraObject.rotation.z << "\n";
+	//transformation
+	if(keys[SDLK_w]){
+		//CameraObject.move(glm::vec3(0,0,0.1));
+		CameraObject.position.z += 0.1;
 	}
-	if(keys[KEY_S]){
-		CameraPos.z -= 0.01;
+	if(keys[SDLK_s]){
+		//CameraObject.move(glm::vec3(0,0,-0.1));
+		CameraObject.position.z -= 0.1;
+	}
+	if(keys[SDLK_a]){
+		CameraObject.position.x += 0.1;
+	}
+	if(keys[SDLK_d]){
+		CameraObject.position.x -= 0.1;
+	}
+	if(keys[SDLK_SPACE]){
+		CameraObject.position.y -= 0.01;
+	}
+	if(keys[SDLK_LSHIFT]){
+		CameraObject.position.y += 0.01;
+	}
+	
+	//rotation
+	if(keys[SDLK_UP]){
+		CameraObject.rotation.x += 1;
+	}
+	if(keys[SDLK_DOWN]){
+		CameraObject.rotation.x -= 1;
+	}
+	
+	if(keys[SDLK_LEFT]){
+		CameraObject.rotation.y += 1;
+	}
+	
+	if(keys[SDLK_RIGHT]){
+		CameraObject.rotation.y -= 1;
 	}
 }
 
@@ -203,53 +304,18 @@ void pre_draw(){
 	
 	glUseProgram(ShaderObject.ShaderProgramm);
 	
-	
-	//transformation
-	GLint ModelMatrixLocation = glGetUniformLocation(ShaderObject.ShaderProgramm,"ModelMatrix");
-	
-	//Transformation Matrix
-	glm::mat4 translate = glm::translate(glm::mat4(1.0f),CameraPos);
-	
-	if(ModelMatrixLocation>=0){
-		glUniformMatrix4fv(ModelMatrixLocation,1,GL_FALSE,&translate[0][0]);
-	}else{
-		std::cout << "error: couldn't find Perspection\n";
-	}
-	
-	
-	//Projektion in perspective
-	GLint PerspectiveLocation = glGetUniformLocation(ShaderObject.ShaderProgramm,"Perspecive");
-	
-	//Projetion Matrix
-	glm::mat4 perspective = glm::perspective(glm::radians(45.0f),//FOW 
-														(float)Win_W/Win_H,//wight-hight rate
-														0.1f,//nearst point to see
-														10.0f);//far awayst point to see
-	for(int i=0;i<4;i++){
-		std::cout << perspective[i][0]<< " " << perspective[i][1]<< " "<< perspective[i][2]<< " "<< perspective[i][3] <<"\n";
-	}
-	std::cout <<"\n";
-	for(int i=0;i<4;i++){
-		std::cout << translate[i][0]<< " " << translate[i][1]<< " "<< translate[i][2]<< " "<< translate[i][3] <<"\n";
-	}
-	
-	
-	if(ModelMatrixLocation>=0){
-		glUniformMatrix4fv(PerspectiveLocation,1,GL_FALSE,&perspective[0][0]);
-	}else{
-		std::cout << "error: couldn't find perspective\n";
-		//exit(EXIT_FAILURE);
-	}
+	CameraObject.update();
 	
 }
 
 void draw(){
-	
+	glEnable(GL_DEPTH_TEST);
 	//send stuff to GPU:
 	glBindVertexArray(VertexArrayObject);
 	glBindBuffer(GL_ARRAY_BUFFER,VertexBufferObject);
 	
-	glDrawArrays(GL_TRIANGLES,0,3);
+	glDrawArrays(GL_TRIANGLES,0,vertex_pos.size());
+	glDisable(GL_DEPTH_TEST);
 }
 
 int main(){
