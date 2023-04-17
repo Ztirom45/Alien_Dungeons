@@ -13,10 +13,6 @@ class Camera{
 		void update_translation(){
 			//position
 			Transformation_mat4 = glm::translate(glm::mat4(1.0f),position);
-			//rotatation
-			Transformation_mat4 = glm::rotate(Transformation_mat4, glm::radians(rotation.x), glm::vec3(1,0,0));
-			Transformation_mat4 = glm::rotate(Transformation_mat4, glm::radians(rotation.y), glm::vec3(0,1,0));
-			Transformation_mat4 = glm::rotate(Transformation_mat4, glm::radians(rotation.z), glm::vec3(0,0,1));
 		};
 		
 		void update_rotation(){

@@ -2,6 +2,7 @@
 
 //SDL
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
 //OGL
 
 #include <glad/glad.h>
@@ -15,8 +16,15 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <map>
+#include <string>
+#include <dirent.h>
+#include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
+
+
+
 
 //config
 #define Win_W 1024
@@ -33,10 +41,12 @@ static SDL_GLContext GLContext;
 //VAO (vertex array object)
 static GLuint VertexArrayObject; //position of vertex
 static GLuint VertexArrayObject2;//color of vertex
+static GLuint VertexArrayObject3;//texture cords of vertex
 
 //VBO (vertex buffer object)
 static GLuint VertexBufferObject;
 static GLuint VertexBufferObject2;
+static GLuint VertexBufferObject3;
 
 static std::vector<GLfloat>	vertex_pos = {
 	//	x	y	z
@@ -128,8 +138,55 @@ static std::vector<GLfloat> vertex_col{
 		1,	1,	1,
 	};
 
+static std::vector<GLfloat> vertex_tex{
+	//   r		g		b
+		0,0,
+		0,	1,
+		1,	1,
+		0,	0,
+		1,	0,
+		1,	1,
+		
+		0,0,
+		0,	1,
+		1,	1,
+		0,	0,
+		1,	0,
+		1,	1,
+		
+		0,0,
+		0,	1,
+		1,	1,
+		0,	0,
+		1,	0,
+		1,	1,
+		
+		0,0,
+		0,	1,
+		1,	1,
+		0,	0,
+		1,	0,
+		1,	1,
+		
+		0,0,
+		0,	1,
+		1,	1,
+		0,	0,
+		1,	0,
+		1,	1,
+		
+		0,0,
+		0,	1,
+		1,	1,
+		0,	0,
+		1,	0,
+		1,	1,
+		
+	};
+
 #include "shader.hpp"
 #include "camera.hpp"
+#include "images.hpp"
 
 
 void GetOpenGLVersionInfo(){
@@ -165,6 +222,10 @@ void init(){
 		std::cout << "can't init glad\n";
 		exit(1);
 	}
+	
+	//load image
+	load_GL_textures();
+	load_GL_texture();
 	
 	//print version
 	GetOpenGLVersionInfo();
@@ -207,7 +268,25 @@ void VertexInit(){
 	
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(	1,
-							3,//x,y,z
+							3,//r,g,b
+							GL_FLOAT,
+							GL_FALSE,
+							0,
+							(void*)0
+	);
+
+	
+	//generate texture VBO at 2
+	glGenBuffers(1,&VertexBufferObject3);
+	glBindBuffer(GL_ARRAY_BUFFER,VertexBufferObject3);
+	glBufferData(GL_ARRAY_BUFFER,
+		vertex_tex.size()*sizeof(GLfloat),
+		vertex_tex.data(),
+		GL_STATIC_DRAW);
+	
+	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(	2,
+							2,//x,y
 							GL_FLOAT,
 							GL_FALSE,
 							0,
@@ -217,9 +296,11 @@ void VertexInit(){
 	
 	glBindVertexArray(0);
 	glBindVertexArray(0);
+	glBindVertexArray(0);
 	
 	glDisableVertexAttribArray(0);
 	glDisableVertexAttribArray(1);
+	glDisableVertexAttribArray(2);
 	
 	
 }
@@ -246,15 +327,11 @@ void events(){//get input events
 }
 
 void Input(){//do stuff with keybord inputs
-	
-	std::cout << CameraObject.rotation.y << " , "<< CameraObject.rotation.z << "\n";
 	//transformation
 	if(keys[SDLK_w]){
-		//CameraObject.move(glm::vec3(0,0,0.1));
 		CameraObject.position.z += 0.1;
 	}
 	if(keys[SDLK_s]){
-		//CameraObject.move(glm::vec3(0,0,-0.1));
 		CameraObject.position.z -= 0.1;
 	}
 	if(keys[SDLK_a]){
@@ -264,27 +341,13 @@ void Input(){//do stuff with keybord inputs
 		CameraObject.position.x -= 0.1;
 	}
 	if(keys[SDLK_SPACE]){
-		CameraObject.position.y -= 0.01;
+		CameraObject.position.y -= 0.1;
 	}
 	if(keys[SDLK_LSHIFT]){
-		CameraObject.position.y += 0.01;
+		CameraObject.position.y += 0.1;
 	}
 	
-	//rotation
-	if(keys[SDLK_UP]){
-		CameraObject.rotation.x += 1;
-	}
-	if(keys[SDLK_DOWN]){
-		CameraObject.rotation.x -= 1;
-	}
-	
-	if(keys[SDLK_LEFT]){
-		CameraObject.rotation.y += 1;
-	}
-	
-	if(keys[SDLK_RIGHT]){
-		CameraObject.rotation.y -= 1;
-	}
+	CameraObject.rotation.x = 45;
 }
 
 void clean(){
@@ -302,9 +365,11 @@ void pre_draw(){
 	glClearColor(1.f,1.f,0.f,1.f);
 	glClear(GL_DEPTH_BUFFER_BIT|GL_COLOR_BUFFER_BIT);
 	
+	
+	update_textures("img/tiles.png");
+	CameraObject.update();
 	glUseProgram(ShaderObject.ShaderProgramm);
 	
-	CameraObject.update();
 	
 }
 
