@@ -44,7 +44,7 @@ class Camera{
 				glUniformMatrix4fv(TransformationLocation,1,GL_FALSE,&Transformation_mat4[0][0]);
 			}else{
 				std::cout << "error: couldn't find Transformation\n";
-				exit(EXIT_FAILURE);
+				//exit(EXIT_FAILURE);
 			}
 			
 			//Rotation
@@ -58,7 +58,7 @@ class Camera{
 				glUniformMatrix4fv(RotationLocation,1,GL_FALSE,&rotation_mat4[0][0]);
 			}else{
 				std::cout << "error: couldn't find rotation\n";
-				exit(EXIT_FAILURE);
+				//exit(EXIT_FAILURE);
 			}
 			
 			
@@ -72,7 +72,7 @@ class Camera{
 				glUniformMatrix4fv(PerspectiveLocation,1,GL_FALSE,&perspective_mat4[0][0]);
 			}else{
 				std::cout << "error: couldn't find perspective\n";
-				exit(EXIT_FAILURE);
+				//exit(EXIT_FAILURE);
 			}
 			
 		};

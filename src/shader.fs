@@ -4,6 +4,7 @@
 in vec4 VertexColorOut;
 in vec2 VertexTextureOut;
 
+
 //output to program
 out vec4 color;
 
@@ -11,7 +12,5 @@ out vec4 color;
 uniform sampler2D Texture;
 
 void main() {
-	//color = VertexColorOut;
-	color = texture(Texture, VertexTextureOut);
-	
+	color = texture(Texture, VertexTextureOut)*VertexColorOut;
 }

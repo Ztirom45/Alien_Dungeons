@@ -39,14 +39,12 @@ static SDL_Window* screen;
 static SDL_GLContext GLContext;
 
 //VAO (vertex array object)
-static GLuint VertexArrayObject; //position of vertex
-static GLuint VertexArrayObject2;//color of vertex
-static GLuint VertexArrayObject3;//texture cords of vertex
+static GLuint VertexArrayObject;
 
 //VBO (vertex buffer object)
-static GLuint VertexBufferObject;
-static GLuint VertexBufferObject2;
-static GLuint VertexBufferObject3;
+static GLuint VertexBufferObject;//positions
+static GLuint VertexBufferObject2;//colors
+static GLuint VertexBufferObject3;//textures
 
 static std::vector<GLfloat>	vertex_pos = {
 	//	x	y	z
@@ -139,43 +137,43 @@ static std::vector<GLfloat> vertex_col{
 	};
 
 static std::vector<GLfloat> vertex_tex{
-	//   r		g		b
-		0,0,
+	//  x,	y
+		0,	0,
 		0,	1,
 		1,	1,
 		0,	0,
 		1,	0,
 		1,	1,
 		
-		0,0,
+		0,	0,
 		0,	1,
 		1,	1,
 		0,	0,
 		1,	0,
 		1,	1,
 		
-		0,0,
+		0,	0,
 		0,	1,
 		1,	1,
 		0,	0,
 		1,	0,
 		1,	1,
 		
-		0,0,
+		0,	0,
 		0,	1,
 		1,	1,
 		0,	0,
 		1,	0,
 		1,	1,
 		
-		0,0,
+		0,	0,
 		0,	1,
 		1,	1,
 		0,	0,
 		1,	0,
 		1,	1,
 		
-		0,0,
+		0,	0,
 		0,	1,
 		1,	1,
 		0,	0,
@@ -230,14 +228,13 @@ void init(){
 	//print version
 	GetOpenGLVersionInfo();
 	
+	//Enable shuff
+	glEnable(GL_TEXTURE_2D);
+	
 }
 
 void VertexInit(){
-	//data
-
-	
-	
-	//generate VAO
+	//genereate VAO
 	glGenVertexArrays(1,&VertexArrayObject);
 	glBindVertexArray(VertexArrayObject);
 	
@@ -249,6 +246,7 @@ void VertexInit(){
 		vertex_pos.data(),
 		GL_STATIC_DRAW);
 	
+	//linking up the position array
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(	0,
 							3,//x,y,z
@@ -257,8 +255,8 @@ void VertexInit(){
 							0,
 							(void*)0
 	);
-	
-	//generate color VBO at 1
+		
+	//generate color VBO
 	glGenBuffers(1,&VertexBufferObject2);
 	glBindBuffer(GL_ARRAY_BUFFER,VertexBufferObject2);
 	glBufferData(GL_ARRAY_BUFFER,
@@ -266,17 +264,17 @@ void VertexInit(){
 		vertex_col.data(),
 		GL_STATIC_DRAW);
 	
+	//linking up the color array
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(	1,
 							3,//r,g,b
-							GL_FLOAT,
-							GL_FALSE,
+							GL_FLOAT,//type
+							GL_FALSE,//do something with values
 							0,
-							(void*)0
+							(void*)0//offset
 	);
 
-	
-	//generate texture VBO at 2
+	//generate texture VBO
 	glGenBuffers(1,&VertexBufferObject3);
 	glBindBuffer(GL_ARRAY_BUFFER,VertexBufferObject3);
 	glBufferData(GL_ARRAY_BUFFER,
@@ -284,20 +282,19 @@ void VertexInit(){
 		vertex_tex.data(),
 		GL_STATIC_DRAW);
 	
+	//linking up the texture array
 	glEnableVertexAttribArray(2);
-	glVertexAttribPointer(	2,
+	glVertexAttribPointer(	2,//position
 							2,//x,y
-							GL_FLOAT,
-							GL_FALSE,
+							GL_FLOAT,//type
+							GL_FALSE,//do something with values
 							0,
-							(void*)0
+							(void*)0//offset
 	);
-
 	
+	//unbind Vertex array
 	glBindVertexArray(0);
-	glBindVertexArray(0);
-	glBindVertexArray(0);
-	
+	//disable attrib arrays
 	glDisableVertexAttribArray(0);
 	glDisableVertexAttribArray(1);
 	glDisableVertexAttribArray(2);

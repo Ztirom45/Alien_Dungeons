@@ -80,7 +80,7 @@ void update_textures(std::string texture_name){//name of texture in map
 				glUniform1i(TextureLocation,0);//texture from position 0
 			}else{
 				std::cout << "error: couldn't find Texture\n";
-				exit(EXIT_FAILURE);
+				//exit(EXIT_FAILURE);
 			}
 }
 
