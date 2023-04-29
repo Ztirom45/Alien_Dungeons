@@ -11,139 +11,9 @@ textures[] = {
 
 class mesh{
 	public:
-		std::vector<GLfloat> vertex_pos = {
-		//	x	y	z
-			-1,	-1,	-1,
-			-1,	1,	-1,
-			1,	1,	-1,
-			-1,	-1,	-1,
-			1,	-1,	-1,
-			1,	1,	-1,
-
-			-1	,-1,	-1,
-			-1	,-1,	1,
-			-1	,1,	1,
-			-1	,-1,	-1,
-			-1	,1,	-1,
-			-1	,1,	1,
-
-			-1,	-1,	-1,
-			-1,	-1,	1,
-			1,	-1,	1,
-			-1,	-1,	-1,
-			1,	-1,	-1,
-			1,	-1,	1,
-
-			-1,	-1,	1,
-			-1,	1,	1,
-			1,	1,	1,
-			-1,	-1,	1,
-			1,	-1,	1,
-			1,	1,	1,
-
-			1	,-1,	-1,
-			1	,-1,	1,
-			1	,1,	1,
-			1	,-1,	-1,
-			1	,1,	-1,
-			1	,1,	1,
-
-			-1,	1,	-1,
-			-1,	1,	1,
-			1,	1,	1,
-			-1,	1,	-1,
-			1,	1,	-1,
-			1,	1,	1,
-		};
-		std::vector<GLfloat> vertex_col{
-		//   r		g		b
-			-1,	-1,	-1,
-			-1,	1,	-1,
-			1,	1,	-1,
-			-1,	-1,	-1,
-			1,	-1,	-1,
-			1,	1,	-1,
-
-			-1	,-1,	-1,
-			-1	,-1,	1,
-			-1	,1,	1,
-			-1	,-1,	-1,
-			-1	,1,	-1,
-			-1	,1,	1,
-
-			-1,	-1,	-1,
-			-1,	-1,	1,
-			1,	-1,	1,
-			-1,	-1,	-1,
-			1,	-1,	-1,
-			1,	-1,	1,
-
-			-1,	-1,	1,
-			-1,	1,	1,
-			1,	1,	1,
-			-1,	-1,	1,
-			1,	-1,	1,
-			1,	1,	1,
-
-			1	,-1,	-1,
-			1	,-1,	1,
-			1	,1,	1,
-			1	,-1,	-1,
-			1	,1,	-1,
-			1	,1,	1,
-
-			-1,	1,	-1,
-			-1,	1,	1,
-			1,	1,	1,
-			-1,	1,	-1,
-			1,	1,	-1,
-			1,	1,	1,
-		};
-		std::vector<GLfloat> vertex_tex{
-		//  x,	y
-			0,	0,
-			0,	1,
-			1,	1,
-			0,	0,
-			1,	0,
-			1,	1,
-
-			0,	0,
-			0,	1,
-			1,	1,
-			0,	0,
-			1,	0,
-			1,	1,
-
-			0,	0,
-			0,	1,
-			1,	1,
-			0,	0,
-			1,	0,
-			1,	1,
-
-			0,	0,
-			0,	1,
-			1,	1,
-			0,	0,
-			1,	0,
-			1,	1,
-
-			0,	0,
-			0,	1,
-			1,	1,
-			0,	0,
-			1,	0,
-			1,	1,
-
-			0,	0,
-			0,	1,
-			1,	1,
-			0,	0,
-			1,	0,
-			1,	1,
-
-		};
+		std::vector<GLfloat> vertex_pos = {};
+		std::vector<GLfloat> vertex_col = {};
+		std::vector<GLfloat> vertex_tex = {};
 		
 		void add_point(vec3f pos,vec3f col,vec2f tex,bool resize){
 			//resize and get loacation
@@ -210,6 +80,31 @@ class mesh{
 					break;
 			}
 		};
+		
+		//pages: Buttom,Down,Left,Front,Top,Right
+		void add_cube(vec3f pos,vec6i page_texture,vec6b enabled_pages){
+			
+			if(enabled_pages.v1){
+				add_rect({pos.x,pos.y,1,1},pos.z,1,get_texture_quad(page_texture.v1));
+			}
+			if(enabled_pages.v2){
+				add_rect({pos.x,pos.z,1,1},pos.y,2,get_texture_quad(page_texture.v2));
+			}
+			if(enabled_pages.v3){
+				add_rect({pos.y,pos.z,1,1},pos.x,3,get_texture_quad(page_texture.v3));
+			}
+			
+			if(enabled_pages.v4){
+				add_rect({pos.x,pos.y,1,1},pos.z+1,1,get_texture_quad(page_texture.v4));
+			}
+			if(enabled_pages.v5){
+				add_rect({pos.x,pos.z,1,1},pos.y+1,2,get_texture_quad(page_texture.v5));
+			}
+			if(enabled_pages.v6){
+				add_rect({pos.y,pos.z,1,1},pos.x+1,3,get_texture_quad(page_texture.v6));
+			}
+			
+		}
 };
 
 static mesh my_mesh;

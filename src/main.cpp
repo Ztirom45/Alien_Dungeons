@@ -46,13 +46,18 @@ static GLuint VertexBufferObject;//positions
 static GLuint VertexBufferObject2;//colors
 static GLuint VertexBufferObject3;//textures
 
+//texutres set name:data
+static std::map<std::string, GLuint> textures;
 
 #include "config.hpp"
 #include "types.hpp"
+#include "images.hpp"
 #include "mesh.hpp"
 #include "shader.hpp"
 #include "camera.hpp"
-#include "images.hpp"
+#include "block_types.hpp"
+#include "chunk.hpp"
+#include "rooms.hpp"
 
 
 void GetOpenGLVersionInfo(){
@@ -93,9 +98,9 @@ void init(){
 	load_GL_textures();
 	
 	//test mesh (remove later)
-	my_mesh.add_rect({1,1,1,1},2,1,get_texture_quad(2));
-	my_mesh.add_rect({1,1,1,1},2,2,get_texture_quad(2));
-	my_mesh.add_rect({1,1,1,1},2,3,get_texture_quad(2));
+	my_game_map.update_chunk();
+	my_chunk.add_to_mesh();
+	
 	//print version
 	GetOpenGLVersionInfo();
 	

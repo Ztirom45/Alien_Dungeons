@@ -1,6 +1,3 @@
-//texutres
-static std::map<std::string, GLuint> textures;
-
 void load_GL_textures(){
 	
 	if (auto dir = opendir("img")) {
@@ -39,23 +36,6 @@ void load_GL_textures(){
 		closedir(dir);
 	}
 	
-}
-
-void update_textures(std::string texture_name){//name of texture in map
-			
-			//thanks to https://stackoverflow.com/questions/34432414/how-are-textures-referenced-in-shaders
-			GLint TextureLocation = glGetUniformLocation(ShaderObject.ShaderProgramm, "Texture");
-			GLuint texture_id = textures[texture_name];
-			
-			if(TextureLocation>=0){
-				glActiveTexture(GL_TEXTURE0+0);//texture at position 0
-				glBindTexture(GL_TEXTURE_2D, texture_id);
-				
-				glUniform1i(TextureLocation,0);//texture from position 0
-			}else{
-				std::cout << "error: couldn't find Texture\n";
-				//exit(EXIT_FAILURE);
-			}
 }
 
 //tiles

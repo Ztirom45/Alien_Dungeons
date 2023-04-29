@@ -2,9 +2,9 @@ class Camera{
 	public:
 		//vars
 
-		glm::vec3 position = glm::vec3(0.0f,0.0f,-2.0f);
+		glm::vec3 position = glm::vec3(-4.0f,-4.0f,-4.0f);
 		glm::vec3 rotation = glm::vec3(0.0f, 0.0f, 0.0f);
-		glm::vec4 perspective = glm::vec4(glm::radians(45.0f),(float)Win_W/Win_H,0.1f,10.0f);
+		glm::vec4 perspective = glm::vec4(glm::radians(45.0f),(float)Win_W/Win_H,0.1f,100.0f);
 		
 		glm::mat4 Transformation_mat4;
 		glm::mat4 perspective_mat4;
