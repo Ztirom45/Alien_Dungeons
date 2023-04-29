@@ -46,142 +46,10 @@ static GLuint VertexBufferObject;//positions
 static GLuint VertexBufferObject2;//colors
 static GLuint VertexBufferObject3;//textures
 
-static std::vector<GLfloat>	vertex_pos = {
-	//	x	y	z
-		-1,	-1,	-1,
-		-1,	1,	-1,
-		1,	1,	-1,
-		-1,	-1,	-1,
-		1,	-1,	-1,
-		1,	1,	-1,
-		
-		-1	,-1,	-1,
-		-1	,-1,	1,
-		-1	,1,	1,
-		-1	,-1,	-1,
-		-1	,1,	-1,
-		-1	,1,	1,
-		
-		-1,	-1,	-1,
-		-1,	-1,	1,
-		1,	-1,	1,
-		-1,	-1,	-1,
-		1,	-1,	-1,
-		1,	-1,	1,
-		
-		-1,	-1,	1,
-		-1,	1,	1,
-		1,	1,	1,
-		-1,	-1,	1,
-		1,	-1,	1,
-		1,	1,	1,
-		
-		1	,-1,	-1,
-		1	,-1,	1,
-		1	,1,	1,
-		1	,-1,	-1,
-		1	,1,	-1,
-		1	,1,	1,
-		
-		-1,	1,	-1,
-		-1,	1,	1,
-		1,	1,	1,
-		-1,	1,	-1,
-		1,	1,	-1,
-		1,	1,	1,
-};
 
-static std::vector<GLfloat> vertex_col{
-	//   r		g		b
-		-1,	-1,	-1,
-		-1,	1,	-1,
-		1,	1,	-1,
-		-1,	-1,	-1,
-		1,	-1,	-1,
-		1,	1,	-1,
-		
-		-1	,-1,	-1,
-		-1	,-1,	1,
-		-1	,1,	1,
-		-1	,-1,	-1,
-		-1	,1,	-1,
-		-1	,1,	1,
-		
-		-1,	-1,	-1,
-		-1,	-1,	1,
-		1,	-1,	1,
-		-1,	-1,	-1,
-		1,	-1,	-1,
-		1,	-1,	1,
-		
-		-1,	-1,	1,
-		-1,	1,	1,
-		1,	1,	1,
-		-1,	-1,	1,
-		1,	-1,	1,
-		1,	1,	1,
-		
-		1	,-1,	-1,
-		1	,-1,	1,
-		1	,1,	1,
-		1	,-1,	-1,
-		1	,1,	-1,
-		1	,1,	1,
-		
-		-1,	1,	-1,
-		-1,	1,	1,
-		1,	1,	1,
-		-1,	1,	-1,
-		1,	1,	-1,
-		1,	1,	1,
-	};
-
-static std::vector<GLfloat> vertex_tex{
-	//  x,	y
-		0,	0,
-		0,	1,
-		1,	1,
-		0,	0,
-		1,	0,
-		1,	1,
-		
-		0,	0,
-		0,	1,
-		1,	1,
-		0,	0,
-		1,	0,
-		1,	1,
-		
-		0,	0,
-		0,	1,
-		1,	1,
-		0,	0,
-		1,	0,
-		1,	1,
-		
-		0,	0,
-		0,	1,
-		1,	1,
-		0,	0,
-		1,	0,
-		1,	1,
-		
-		0,	0,
-		0,	1,
-		1,	1,
-		0,	0,
-		1,	0,
-		1,	1,
-		
-		0,	0,
-		0,	1,
-		1,	1,
-		0,	0,
-		1,	0,
-		1,	1,
-		
-	};
-
+#include "config.hpp"
+#include "types.hpp"
+#include "mesh.hpp"
 #include "shader.hpp"
 #include "camera.hpp"
 #include "images.hpp"
@@ -223,14 +91,18 @@ void init(){
 	
 	//load image
 	load_GL_textures();
-	load_GL_texture();
 	
+	//test mesh (remove later)
+	my_mesh.add_rect({1,1,1,1},2,1,get_texture_quad(2));
+	my_mesh.add_rect({1,1,1,1},2,2,get_texture_quad(2));
+	my_mesh.add_rect({1,1,1,1},2,3,get_texture_quad(2));
 	//print version
 	GetOpenGLVersionInfo();
 	
 	//Enable shuff
 	glEnable(GL_TEXTURE_2D);
 	
+
 }
 
 void VertexInit(){
@@ -242,8 +114,8 @@ void VertexInit(){
 	glGenBuffers(1,&VertexBufferObject);
 	glBindBuffer(GL_ARRAY_BUFFER,VertexBufferObject);
 	glBufferData(GL_ARRAY_BUFFER,
-		vertex_pos.size()*sizeof(GLfloat),
-		vertex_pos.data(),
+		my_mesh.vertex_pos.size()*sizeof(GLfloat),
+		my_mesh.vertex_pos.data(),
 		GL_STATIC_DRAW);
 	
 	//linking up the position array
@@ -260,8 +132,8 @@ void VertexInit(){
 	glGenBuffers(1,&VertexBufferObject2);
 	glBindBuffer(GL_ARRAY_BUFFER,VertexBufferObject2);
 	glBufferData(GL_ARRAY_BUFFER,
-		vertex_col.size()*sizeof(GLfloat),
-		vertex_col.data(),
+		my_mesh.vertex_col.size()*sizeof(GLfloat),
+		my_mesh.vertex_col.data(),
 		GL_STATIC_DRAW);
 	
 	//linking up the color array
@@ -278,8 +150,8 @@ void VertexInit(){
 	glGenBuffers(1,&VertexBufferObject3);
 	glBindBuffer(GL_ARRAY_BUFFER,VertexBufferObject3);
 	glBufferData(GL_ARRAY_BUFFER,
-		vertex_tex.size()*sizeof(GLfloat),
-		vertex_tex.data(),
+		my_mesh.vertex_tex.size()*sizeof(GLfloat),
+		my_mesh.vertex_tex.data(),
 		GL_STATIC_DRAW);
 	
 	//linking up the texture array
@@ -362,7 +234,7 @@ void pre_draw(){
 	glClearColor(1.f,1.f,0.f,1.f);
 	glClear(GL_DEPTH_BUFFER_BIT|GL_COLOR_BUFFER_BIT);
 	
-	
+	VertexInit();
 	update_textures("img/tiles.png");
 	CameraObject.update();
 	glUseProgram(ShaderObject.ShaderProgramm);
@@ -376,7 +248,7 @@ void draw(){
 	glBindVertexArray(VertexArrayObject);
 	glBindBuffer(GL_ARRAY_BUFFER,VertexBufferObject);
 	
-	glDrawArrays(GL_TRIANGLES,0,vertex_pos.size());
+	glDrawArrays(GL_TRIANGLES,0,my_mesh.vertex_pos.size());
 	glDisable(GL_DEPTH_TEST);
 }
 

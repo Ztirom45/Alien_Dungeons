@@ -1,31 +1,5 @@
-static GLuint testTexture;
-
-void load_GL_texture(){
-	
-	SDL_Surface * surface = IMG_Load("img/tiles.png");
-	
-	//glut image
-	GLuint texTure = 0;
-	glGenTextures(1, &testTexture);
-	glBindTexture(GL_TEXTURE_2D, testTexture);
-	
-	//texture cord up to 0 and 1
-	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	
-	//scale filter
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,GL_NEAREST);
-	
-	//gen image
-	glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA,surface->w,surface->h,0,GL_RGBA,GL_UNSIGNED_BYTE,surface->pixels);
-	
-	//cleaer surface
-	SDL_FreeSurface(surface);
-}
-
+//texutres
 static std::map<std::string, GLuint> textures;
-
 
 void load_GL_textures(){
 	
@@ -71,7 +45,7 @@ void update_textures(std::string texture_name){//name of texture in map
 			
 			//thanks to https://stackoverflow.com/questions/34432414/how-are-textures-referenced-in-shaders
 			GLint TextureLocation = glGetUniformLocation(ShaderObject.ShaderProgramm, "Texture");
-			GLuint texture_id = testTexture;//textures[texture_name];
+			GLuint texture_id = textures[texture_name];
 			
 			if(TextureLocation>=0){
 				glActiveTexture(GL_TEXTURE0+0);//texture at position 0
@@ -84,5 +58,27 @@ void update_textures(std::string texture_name){//name of texture in map
 			}
 }
 
+//tiles
+/*
+texture:
++---+---+---+---+
+|	|	|	|	|
+| 0 | 1 | 2 | 3 |
+|	|	|	|	|
++---+---+---+---+
+index 0 -return> {
+0
+0
+1
+0.25
+}
+*/
 
-
+RectF get_texture_quad(int index){
+	RectF return_rect;
+	return_rect.x = ((float)1/ImgTileW)*index;
+	return_rect.y = 0;
+	return_rect.w = (float)1/ImgTileW;
+	return_rect.h = 1;
+	return return_rect;
+}
