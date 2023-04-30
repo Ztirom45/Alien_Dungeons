@@ -15,7 +15,6 @@ class game_map{
 			my_chunk.clear();
 			for(int x=0;x<=Room_W-1;x++){
 				for(int y=0;y<=Room_H-1;y++){
-					printf("%d %d\n",x,y);
 					Uint8 block_type = RoomData[room_array_data[pos.x][pos.y]][x][y];
 					my_chunk.data[x+1][1][y+1] = block_type;
 					if(block_type == 2){
@@ -23,6 +22,7 @@ class game_map{
 					}
 				}
 			}
+			my_chunk.add_to_mesh();
 		}
 		
 };

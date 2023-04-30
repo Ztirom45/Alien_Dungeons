@@ -60,6 +60,7 @@ static std::map<std::string, GLuint> textures;
 #include "rooms.hpp"
 
 
+
 void GetOpenGLVersionInfo(){
 	std::cout << "Vendor:				" << glGetString(GL_VENDOR) <<"\n";
 	std::cout << "Renderer:			" << glGetString(GL_RENDERER) <<"\n";
@@ -97,20 +98,18 @@ void init(){
 	//load image
 	load_GL_textures();
 	
-	//test mesh (remove later)
-	my_game_map.update_chunk();
-	my_chunk.add_to_mesh();
-	
 	//print version
 	GetOpenGLVersionInfo();
 	
 	//Enable shuff
 	glEnable(GL_TEXTURE_2D);
 	
+	my_game_map.update_chunk();
 
 }
 
-void VertexInit(){
+
+void VertexUpdate(mesh vertex_mesh){
 	//genereate VAO
 	glGenVertexArrays(1,&VertexArrayObject);
 	glBindVertexArray(VertexArrayObject);
@@ -119,8 +118,8 @@ void VertexInit(){
 	glGenBuffers(1,&VertexBufferObject);
 	glBindBuffer(GL_ARRAY_BUFFER,VertexBufferObject);
 	glBufferData(GL_ARRAY_BUFFER,
-		my_mesh.vertex_pos.size()*sizeof(GLfloat),
-		my_mesh.vertex_pos.data(),
+		vertex_mesh.vertex_pos.size()*sizeof(GLfloat),
+		vertex_mesh.vertex_pos.data(),
 		GL_STATIC_DRAW);
 	
 	//linking up the position array
@@ -137,8 +136,8 @@ void VertexInit(){
 	glGenBuffers(1,&VertexBufferObject2);
 	glBindBuffer(GL_ARRAY_BUFFER,VertexBufferObject2);
 	glBufferData(GL_ARRAY_BUFFER,
-		my_mesh.vertex_col.size()*sizeof(GLfloat),
-		my_mesh.vertex_col.data(),
+		vertex_mesh.vertex_col.size()*sizeof(GLfloat),
+		vertex_mesh.vertex_col.data(),
 		GL_STATIC_DRAW);
 	
 	//linking up the color array
@@ -155,8 +154,8 @@ void VertexInit(){
 	glGenBuffers(1,&VertexBufferObject3);
 	glBindBuffer(GL_ARRAY_BUFFER,VertexBufferObject3);
 	glBufferData(GL_ARRAY_BUFFER,
-		my_mesh.vertex_tex.size()*sizeof(GLfloat),
-		my_mesh.vertex_tex.data(),
+		vertex_mesh.vertex_tex.size()*sizeof(GLfloat),
+		vertex_mesh.vertex_tex.data(),
 		GL_STATIC_DRAW);
 	
 	//linking up the texture array
@@ -232,6 +231,8 @@ void clean(){
 }
 
 void pre_draw(){
+	//setup mesh
+	
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_CULL_FACE);
 	
@@ -239,30 +240,31 @@ void pre_draw(){
 	glClearColor(1.f,1.f,0.f,1.f);
 	glClear(GL_DEPTH_BUFFER_BIT|GL_COLOR_BUFFER_BIT);
 	
-	VertexInit();
+	VertexUpdate(my_mesh);
 	update_textures("img/tiles.png");
 	CameraObject.update();
-	glUseProgram(ShaderObject.ShaderProgramm);
 	
 	
 }
 
-void draw(){
+void draw(mesh vertex_mesh){
 	glEnable(GL_DEPTH_TEST);
 	//send stuff to GPU:
 	glBindVertexArray(VertexArrayObject);
 	glBindBuffer(GL_ARRAY_BUFFER,VertexBufferObject);
 	
-	glDrawArrays(GL_TRIANGLES,0,my_mesh.vertex_pos.size());
+	glDrawArrays(GL_TRIANGLES,0,vertex_mesh.vertex_pos.size());
 	glDisable(GL_DEPTH_TEST);
 }
+
+#include "player.hpp"
 
 int main(){
 	// 1. Setup graphics program 
 	init();
 	
 	// 2. Setup geometry
-	VertexInit();
+	VertexUpdate(my_mesh);
 	
 	//3. Create shader
 	ShaderObject.load_fs_file("src/shader.fs");
@@ -275,8 +277,9 @@ int main(){
 		Input();
 		
 		pre_draw();
-		draw();
+		draw(my_mesh);
 		
+		glUseProgram(ShaderObject.ShaderProgramm);
 		//camera
 		
 		//Update Screen
