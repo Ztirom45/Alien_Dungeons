@@ -55,10 +55,11 @@ static std::map<std::string, GLuint> textures;
 #include "mesh.hpp"
 #include "shader.hpp"
 #include "camera.hpp"
+#include "shader_models.hpp"
 #include "block_types.hpp"
 #include "chunk.hpp"
 #include "rooms.hpp"
-
+#include "player.hpp"
 
 
 void GetOpenGLVersionInfo(){
@@ -104,78 +105,12 @@ void init(){
 	//Enable shuff
 	glEnable(GL_TEXTURE_2D);
 	
+	//setup stuff
 	my_game_map.update_chunk();
+	my_player.setup_model();
+	my_player.player_model.texture = "img/Alien.png";
+	
 
-}
-
-
-void VertexUpdate(mesh vertex_mesh){
-	//genereate VAO
-	glGenVertexArrays(1,&VertexArrayObject);
-	glBindVertexArray(VertexArrayObject);
-	
-	//generate position VBO at 0
-	glGenBuffers(1,&VertexBufferObject);
-	glBindBuffer(GL_ARRAY_BUFFER,VertexBufferObject);
-	glBufferData(GL_ARRAY_BUFFER,
-		vertex_mesh.vertex_pos.size()*sizeof(GLfloat),
-		vertex_mesh.vertex_pos.data(),
-		GL_STATIC_DRAW);
-	
-	//linking up the position array
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(	0,
-							3,//x,y,z
-							GL_FLOAT,
-							GL_FALSE,
-							0,
-							(void*)0
-	);
-		
-	//generate color VBO
-	glGenBuffers(1,&VertexBufferObject2);
-	glBindBuffer(GL_ARRAY_BUFFER,VertexBufferObject2);
-	glBufferData(GL_ARRAY_BUFFER,
-		vertex_mesh.vertex_col.size()*sizeof(GLfloat),
-		vertex_mesh.vertex_col.data(),
-		GL_STATIC_DRAW);
-	
-	//linking up the color array
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(	1,
-							3,//r,g,b
-							GL_FLOAT,//type
-							GL_FALSE,//do something with values
-							0,
-							(void*)0//offset
-	);
-
-	//generate texture VBO
-	glGenBuffers(1,&VertexBufferObject3);
-	glBindBuffer(GL_ARRAY_BUFFER,VertexBufferObject3);
-	glBufferData(GL_ARRAY_BUFFER,
-		vertex_mesh.vertex_tex.size()*sizeof(GLfloat),
-		vertex_mesh.vertex_tex.data(),
-		GL_STATIC_DRAW);
-	
-	//linking up the texture array
-	glEnableVertexAttribArray(2);
-	glVertexAttribPointer(	2,//position
-							2,//x,y
-							GL_FLOAT,//type
-							GL_FALSE,//do something with values
-							0,
-							(void*)0//offset
-	);
-	
-	//unbind Vertex array
-	glBindVertexArray(0);
-	//disable attrib arrays
-	glDisableVertexAttribArray(0);
-	glDisableVertexAttribArray(1);
-	glDisableVertexAttribArray(2);
-	
-	
 }
 
 void events(){//get input events
@@ -200,23 +135,28 @@ void events(){//get input events
 }
 
 void Input(){//do stuff with keybord inputs
-	//transformation
+	//transformation of camera
+	//and player rotation
 	if(keys[SDLK_w]){
 		CameraObject.position.z += 0.1;
+		my_player.rot.y = 180;
 	}
 	if(keys[SDLK_s]){
 		CameraObject.position.z -= 0.1;
+		my_player.rot.y = 0;
 	}
 	if(keys[SDLK_a]){
 		CameraObject.position.x += 0.1;
+		my_player.rot.y = 90;
 	}
 	if(keys[SDLK_d]){
 		CameraObject.position.x -= 0.1;
+		my_player.rot.y = 270;
 	}
 	if(keys[SDLK_SPACE]){
 		CameraObject.position.y -= 0.1;
 	}
-	if(keys[SDLK_LSHIFT]){
+	if(keys[SDLK_TAB]){
 		CameraObject.position.y += 0.1;
 	}
 	
@@ -240,31 +180,15 @@ void pre_draw(){
 	glClearColor(1.f,1.f,0.f,1.f);
 	glClear(GL_DEPTH_BUFFER_BIT|GL_COLOR_BUFFER_BIT);
 	
-	VertexUpdate(my_mesh);
-	update_textures("img/tiles.png");
-	CameraObject.update();
-	
 	
 }
-
-void draw(mesh vertex_mesh){
-	glEnable(GL_DEPTH_TEST);
-	//send stuff to GPU:
-	glBindVertexArray(VertexArrayObject);
-	glBindBuffer(GL_ARRAY_BUFFER,VertexBufferObject);
-	
-	glDrawArrays(GL_TRIANGLES,0,vertex_mesh.vertex_pos.size());
-	glDisable(GL_DEPTH_TEST);
-}
-
-#include "player.hpp"
 
 int main(){
 	// 1. Setup graphics program 
 	init();
 	
 	// 2. Setup geometry
-	VertexUpdate(my_mesh);
+	my_mesh.setup_mesh();
 	
 	//3. Create shader
 	ShaderObject.load_fs_file("src/shader.fs");
@@ -277,10 +201,36 @@ int main(){
 		Input();
 		
 		pre_draw();
-		draw(my_mesh);
 		
+		glEnable(GL_DEPTH_TEST);
+		
+		//draw player
+		my_player.player_model.setup_mesh();
+		update_textures(my_player.player_model.texture);
+		CameraObject.update();
+		
+		
+		ShaderModelObject.position = glm::vec3(
+			my_player.pos.x-CameraObject.position.x,
+			my_player.pos.y-CameraObject.position.y,
+			my_player.pos.z-CameraObject.position.z);
+		
+		ShaderModelObject.rotation = my_player.rot;
+		ShaderModelObject.update();
+		my_player.player_model.draw();
+		
+		//draw room
+		my_mesh.setup_mesh();
+		update_textures(my_mesh.texture);
+		CameraObject.update();
+		ShaderModelObject.position = {0,0,0};
+		ShaderModelObject.rotation = {0,0,0};
+		ShaderModelObject.update();
+		my_mesh.draw();
+
+		glDisable(GL_DEPTH_TEST);
+
 		glUseProgram(ShaderObject.ShaderProgramm);
-		//camera
 		
 		//Update Screen
 		SDL_GL_SwapWindow(screen);

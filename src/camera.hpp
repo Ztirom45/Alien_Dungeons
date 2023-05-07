@@ -2,7 +2,7 @@ class Camera{
 	public:
 		//vars
 
-		glm::vec3 position = glm::vec3(-4.0f,-4.0f,-4.0f);
+		glm::vec3 position = glm::vec3(-6.0f,-12.0f,-15.0f);
 		glm::vec3 rotation = glm::vec3(0.0f, 0.0f, 0.0f);
 		glm::vec4 perspective = glm::vec4(glm::radians(45.0f),(float)Win_W/Win_H,0.1f,100.0f);
 		
@@ -10,7 +10,7 @@ class Camera{
 		glm::mat4 perspective_mat4;
 		glm::mat4 rotation_mat4;
 		
-		void update_translation(){
+		void update_transformation(){
 			//position
 			Transformation_mat4 = glm::translate(glm::mat4(1.0f),position);
 		};
@@ -39,7 +39,7 @@ class Camera{
 			
 			//Transformation Matrix
 			
-			update_translation();
+			update_transformation();
 			if(TransformationLocation>=0){
 				glUniformMatrix4fv(TransformationLocation,1,GL_FALSE,&Transformation_mat4[0][0]);
 			}else{

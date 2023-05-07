@@ -16,9 +16,12 @@ class game_map{
 			for(int x=0;x<=Room_W-1;x++){
 				for(int y=0;y<=Room_H-1;y++){
 					Uint8 block_type = RoomData[room_array_data[pos.x][pos.y]][x][y];
+					//add floor everytime
 					my_chunk.data[x+1][1][y+1] = block_type;
+					//if type = wall add to wall blocks
 					if(block_type == 2){
 						my_chunk.data[x+1][2][y+1] = block_type;
+						my_chunk.data[x+1][3][y+1] = block_type;
 					}
 				}
 			}

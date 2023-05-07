@@ -1,5 +1,5 @@
 #define ChunkSizeX Room_W+2
-#define ChunkSizeY 3
+#define ChunkSizeY 4
 #define ChunkSizeZ Room_H+2
 
 class chunk{

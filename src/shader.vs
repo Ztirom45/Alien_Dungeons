@@ -15,6 +15,8 @@ layout(location=2) in vec2 vertexTexture;
 uniform mat4 Transformation;
 uniform mat4 Rotation; 
 uniform mat4 Perspective;
+uniform mat4 model_Transformation;
+uniform mat4 model_Rotation; 
 
 //send stuff to fragment shader
 out vec4 VertexColorOut;
@@ -25,7 +27,7 @@ void main() {
 	VertexTextureOut = vertexTexture;
 	
 	
-	vec4 newPosition = Perspective * Rotation * Transformation  * vec4(position.x,position.y,position.z,1.0f);
+	vec4 newPosition = Perspective * Rotation * (Transformation+model_Transformation) * model_Rotation*vec4(position.x,position.y,position.z,1.0f);
 	
 	gl_Position = newPosition;
 }
