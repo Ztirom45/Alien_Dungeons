@@ -5,7 +5,7 @@
 //room
 #define Room_W 16
 #define Room_H 16
-#define TileImgSize 16
+#define TileImgSize 32
 
 //texture
 #define Map_W 3

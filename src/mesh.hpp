@@ -15,7 +15,7 @@ class mesh{
 		std::vector<GLfloat> vertex_col = {};
 		std::vector<GLfloat> vertex_tex = {};
 		
-		std::string texture = "img/tiles.png";
+		std::string texture = "img/tiles32.png";
 		
 		void add_point(vec3f pos,vec3f col,vec2f tex,int position){//if posion == 0 resize else add to position
 			//resize and get loacation

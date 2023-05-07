@@ -138,19 +138,29 @@ void Input(){//do stuff with keybord inputs
 	//transformation of camera
 	//and player rotation
 	if(keys[SDLK_w]){
-		CameraObject.position.z += 0.1;
+		if(!my_player.in_wall(CameraObject.position,{0.0f,-my_player.speed})){
+			CameraObject.position.z += my_player.speed;
+		}
 		my_player.rot.y = 180;
+		
 	}
 	if(keys[SDLK_s]){
-		CameraObject.position.z -= 0.1;
+		
+		if(!my_player.in_wall(CameraObject.position,{0.0f,my_player.speed})){
+			CameraObject.position.z -= 0.1;
+		}
 		my_player.rot.y = 0;
 	}
 	if(keys[SDLK_a]){
-		CameraObject.position.x += 0.1;
+		if(!my_player.in_wall(CameraObject.position,{-my_player.speed,0.0f})){
+			CameraObject.position.x += 0.1;
+		}
 		my_player.rot.y = 90;
 	}
 	if(keys[SDLK_d]){
-		CameraObject.position.x -= 0.1;
+		if(!my_player.in_wall(CameraObject.position,{my_player.speed,0.0f})){
+			CameraObject.position.x -= 0.1;
+		}
 		my_player.rot.y = 270;
 	}
 	if(keys[SDLK_SPACE]){
@@ -160,7 +170,7 @@ void Input(){//do stuff with keybord inputs
 		CameraObject.position.y += 0.1;
 	}
 	
-	CameraObject.rotation.x = 45;
+	CameraObject.rotation.x = 70;
 }
 
 void clean(){
@@ -168,6 +178,15 @@ void clean(){
 	
 	SDL_Quit();
 
+}
+
+void update(){
+	//key events
+	events();
+	
+	//update player
+	Input();
+	my_player.update();
 }
 
 void pre_draw(){
@@ -197,8 +216,7 @@ int main(){
 	
 	//4. main loop
 	while(loop){
-		events();
-		Input();
+		update();
 		
 		pre_draw();
 		
@@ -218,6 +236,8 @@ int main(){
 		ShaderModelObject.rotation = my_player.rot;
 		ShaderModelObject.update();
 		my_player.player_model.draw();
+		
+		//debug please remove
 		
 		//draw room
 		my_mesh.setup_mesh();
