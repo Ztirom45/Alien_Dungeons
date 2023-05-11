@@ -1,4 +1,4 @@
-class player{
+class entity{
 	public:
 		glm::vec3 pos = glm::vec3(0.0f,-8.0f,-3.0f);//offset form camera pos
 		glm::vec3 rot = glm::vec3(0.0f,0.0f,0.0f);//rotation of player model
@@ -7,6 +7,16 @@ class player{
 		float speed = 0.1;
 		RectF hitbox = {2,2,0.5,0.5};
 		
+		
+		RectF get_rect(glm::vec2 offset_pos){
+			//returns position of x y wh of the model
+			return {
+				(pos.x-offset_pos.x-hitbox.x-hitbox.w)/2,
+				(pos.z-offset_pos.y-hitbox.y-hitbox.h)/2,
+				(pos.x-offset_pos.x-hitbox.x+hitbox.w)/2,
+				(pos.z-offset_pos.y-hitbox.y+hitbox.h)/2
+			};
+		};
 		
 		void setup_model(){
 			float W = 20;
@@ -89,57 +99,37 @@ class player{
 		
 		bool in_wall(glm::vec3 camera_pos,glm::vec2 speed){
 			int room_index = my_game_map.room_array_data[(int)my_game_map.pos.x][(int)my_game_map.pos.y];
-			int x,y;
+			RectF Current_Rect = get_rect({camera_pos.x-speed.x,camera_pos.z-speed.y});
 			//front
 			if(speed.y<0){
-				
-				y = (int)(pos.z-camera_pos.z-hitbox.y-hitbox.h+speed.y)/2;
 				//front left corner
-				x = (int)(pos.x-camera_pos.x-hitbox.x-hitbox.w+speed.x)/2;
-				if(RoomData[room_index][x][y]==2){return 1;}
-				
+				if(RoomData[room_index][(int)Current_Rect.x][(int)Current_Rect.y]==2){return 1;}
 				//front right corner
-				x = (int)(pos.x-camera_pos.x-hitbox.x+hitbox.w+speed.x)/2;
-				if(RoomData[room_index][x][y]==2){return 1;}
+				if(RoomData[room_index][(int)Current_Rect.w][(int)Current_Rect.y]==2){return 1;}
 			}
 			
 			//left
 			if(speed.x<0){
-				x = (int)(pos.x-camera_pos.x-hitbox.x-hitbox.w+speed.x)/2;
-				
-				//front left corner
-				y = (int)(pos.z-camera_pos.z-hitbox.y-hitbox.h+speed.y)/2;
-				if(RoomData[room_index][x][y]==2){return 1;}
-				
-				//back left corner
-				y = (int)(pos.z-camera_pos.z-hitbox.y+hitbox.h+speed.y)/2;
-				if(RoomData[room_index][x][y]==2){return 1;}
+				//left front corner
+				if(RoomData[room_index][(int)Current_Rect.x][(int)Current_Rect.y]==2){return 1;}
+				//left back corner
+				if(RoomData[room_index][(int)Current_Rect.x][(int)Current_Rect.h]==2){return 1;}
 			}
 			
 			//back
 			if(speed.y>0){
-				y = (int)(pos.z-camera_pos.z-hitbox.y+hitbox.h+speed.y)/2;
-				
-				//front left corner
-				x = (int)(pos.x-camera_pos.x-hitbox.x-hitbox.w+speed.x)/2;
-				if(RoomData[room_index][x][y]==2){return 1;}
-				
-				//front right corner
-				x = (int)(pos.x-camera_pos.x-hitbox.x+hitbox.w+speed.x)/2;
-				if(RoomData[room_index][x][y]==2){return 1;}
+				//back left corner
+				if(RoomData[room_index][(int)Current_Rect.x][(int)Current_Rect.h]==2){return 1;}
+				//back right corner
+				if(RoomData[room_index][(int)Current_Rect.w][(int)Current_Rect.h]==2){return 1;}
 			}
 			
 			//right
 			if(speed.x>0){
-				x = (int)(pos.x-camera_pos.x-hitbox.x+hitbox.w+speed.x)/2;
-				
-				//front left corner
-				y = (int)(pos.z-camera_pos.z-hitbox.y-hitbox.h+speed.y)/2;
-				if(RoomData[room_index][x][y]==2){return 1;}
-				
-				//back left corner
-				y = (int)(pos.z-camera_pos.z-hitbox.y+hitbox.h+speed.y)/2;
-				if(RoomData[room_index][x][y]==2){return 1;}
+				//right front corner
+				if(RoomData[room_index][(int)Current_Rect.w][(int)Current_Rect.y]==2){return 1;}
+				//right back corner
+				if(RoomData[room_index][(int)Current_Rect.w][(int)Current_Rect.h]==2){return 1;}
 			}
 			return 0;
 		};
@@ -151,5 +141,97 @@ class player{
 			}
 		};
 };
+/*
+class enemy: public entity{
+	public:
+		path_finder pf;
+		int path_pos = 0;
+		vec2i LastPlayerPos = {0,0};
+		
+		void update_path(RectF PlayerRect){
+			//find_path() only if player updated position
+			if(PlayerRect.x!=LastPlayerPos.x
+			 ||PlayerRect.y!=LastPlayerPos.y){
+				
+				//path finder stuff
+				pf.reset({(int)PlayerRect.x,(int)PlayerRect.y},my_game_map.room_array_data[(int)my_game_map.pos.x][(int)my_game_map.pos.y]);
+				pf.find_path((int)PlayerRect.x,(int)PlayerRect.y);
+				
+				//reset vars
+				LastPlayerPos.x = PlayerRect.x;
+				LastPlayerPos.y = PlayerRect.y;
+				path_pos = 1;
+			}
+		};
+		
+		
+		void follow_path(){
+			glm::vec2 goal = pf.path[path_pos];
+			RectF OwnRect = get_rect
+			//Down
+			if(rect_dsp.y<goal.y){
+				if(rect_dsp.y-goal.y<-speed){
+					rect_dsp.y +=speed;
+				}else{
+					rect_dsp.y = goal.y;
+				}
+				rect_img.y = 0;//row 0
+			}
+			
+			
+			//Up
+			if(rect_dsp.y>goal.y){
+				if(rect_dsp.y-goal.y>speed){
+					rect_dsp.y -=speed;
+				}else{
+					rect_dsp.y = goal.y;
+				}
+				rect_img.y = 3*rect_img.h;//row 3
+			}
+			//Right
+			if(rect_dsp.x<goal.x){
+				if(rect_dsp.x-goal.x<-speed){
+					rect_dsp.x += speed;
+				}else{
+					rect_dsp.x = goal.x;
+				}
+				rect_img.y = 2*rect_img.h;//row 2
+			}
+			//Left
+			if(rect_dsp.x>goal.x){
+				if(rect_dsp.x-goal.x>speed){
+					rect_dsp.x -=speed;
+				}else{
+					rect_dsp.x = goal.x;
+				}
+				rect_img.y = rect_img.h;//row 1
+			}
+			
+			if(rect_dsp.x==goal.x&&rect_dsp.y==goal.y){
+				if(path_pos!=pf.path.size()-1){
+					path_pos++;
+				}
+			}
+			
+		};
+		
+		void update(){
+			//find path
+			
+			
+			
+			//follow_path();
+		
+			//lives
+			if(lives<=0){
+				loop = false;
+			}
+		};
 
-static player my_player;
+};
+
+static enemy my_enemy;
+*/
+
+static entity my_player;
+

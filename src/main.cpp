@@ -1,5 +1,7 @@
 //compile: `$ make`
 
+#define NDEBUG //other wise nolise would not work because assert(a!=b) doesn't work
+
 //SDL
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
@@ -11,6 +13,8 @@
 #include <glm/trigonometric.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/ext.hpp>
+#include <glm/ext/scalar_constants.hpp>
+#include <glm/gtx/string_cast.hpp>
 
 //STD
 #include <iostream>
@@ -59,6 +63,7 @@ static std::map<std::string, GLuint> textures;
 #include "block_types.hpp"
 #include "chunk.hpp"
 #include "rooms.hpp"
+#include "path_finder.hpp"
 #include "player.hpp"
 
 
@@ -137,38 +142,43 @@ void events(){//get input events
 void Input(){//do stuff with keybord inputs
 	//transformation of camera
 	//and player rotation
+	glm::vec3 keys_vector = {0.0f,0.0f,0.0f};
 	if(keys[SDLK_w]){
-		if(!my_player.in_wall(CameraObject.position,{0.0f,-my_player.speed})){
-			CameraObject.position.z += my_player.speed;
-		}
-		my_player.rot.y = 180;
-		
+		keys_vector.z += 1;
 	}
 	if(keys[SDLK_s]){
-		
-		if(!my_player.in_wall(CameraObject.position,{0.0f,my_player.speed})){
-			CameraObject.position.z -= 0.1;
-		}
-		my_player.rot.y = 0;
+		keys_vector.z -= 1;
 	}
 	if(keys[SDLK_a]){
-		if(!my_player.in_wall(CameraObject.position,{-my_player.speed,0.0f})){
-			CameraObject.position.x += 0.1;
-		}
-		my_player.rot.y = 90;
+		keys_vector.x += 1;
 	}
 	if(keys[SDLK_d]){
-		if(!my_player.in_wall(CameraObject.position,{my_player.speed,0.0f})){
-			CameraObject.position.x -= 0.1;
-		}
-		my_player.rot.y = 270;
+		keys_vector.x -= 1;
 	}
-	if(keys[SDLK_SPACE]){
-		CameraObject.position.y -= 0.1;
+	
+	
+	glm::vec3 direction(0.0f);
+	//normalize the vector only if the retun insn't -nan
+	if(keys_vector.x!=0||keys_vector.y!=0||keys_vector.z!=0){
+		//callculates direction via normalising the vector
+		direction = glm::normalize(keys_vector);
 	}
-	if(keys[SDLK_TAB]){
-		CameraObject.position.y += 0.1;
+	
+	//cheak for wallcolition seperate on the x and y axe
+	if(my_player.in_wall(CameraObject.position,{-direction.x*my_player.speed,0.0f})){
+		direction.x = 0;
 	}
+	
+	if(my_player.in_wall(CameraObject.position,{0.0f,-direction.z*my_player.speed})){
+		direction.z = 0;
+	}
+	
+	//calculate the angle of the player
+	float angle = glm::degrees(atan2(direction.z,-direction.x));
+	
+	//update position and rotation of the player
+	my_player.rot.y = angle+90;
+	CameraObject.move(direction,my_player.speed);
 	
 	CameraObject.rotation.x = 70;
 }

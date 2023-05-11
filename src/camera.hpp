@@ -76,14 +76,12 @@ class Camera{
 			}
 			
 		};
-		void move(glm::vec3 speed){
-			float cosa = cos(glm::radians(rotation.y));
-			float sina = sin(glm::radians(rotation.y));
-			
-			//calculate new x,z value
-			position.x += speed.z * sina + speed.x * cosa;
-			position.z += speed.z * cosa - speed.x * sina;
-
+		
+		//takes a normalised vector and a speed to move
+		void move(glm::vec3 direction,float speed){
+			position.x += direction.x*speed;
+			position.y += direction.y*speed;
+			position.z += direction.z*speed;
 		};
 
 };
