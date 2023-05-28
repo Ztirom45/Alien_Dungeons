@@ -1,19 +1,14 @@
-#vars
-CC = g++
-CFLAGS = -lm 
-CFLAGS += -I/usr/include
-LDLIBS = -Llib -lSDL2 -lSDL2main -lSDL2_image
+# Declare compiler tools and flags
+CC      = g++
+CFLAGS += -I/usr/include -I./src
+LDLIBS  = -lGL -lSDL2 -ldl -lSDL2_image
 
-CFILES = src/main.cpp
-CTESTFILES = src/test.cpp
-OUTFILE = bin/main
+
+# Build the main executable
 all:
-	$(CC) $(CFILES) -o $(OUTFILE) $(CFLAGS) $(LDLIBS)
+	$(CC)  -o main src/main.cpp ./src/glad.c $(CFLAGS) $(LDLIBS)
 
-test:
-	$(CC) $(CTESTFILES) -o $(OUTFILE) $(CFLAGS) $(LDLIBS)
 
+# Helper target that cleans up build artifacts
 clean:
-	rm bin/main
-
-
+	rm main
