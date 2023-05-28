@@ -15,4 +15,6 @@
 #define AnimationFPS 8//AnimationFrames per secount
 #define AnimationFrameCount 3//count of AnimationFrames
 
+//colision
+#define doColision 1
 

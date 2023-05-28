@@ -114,6 +114,7 @@ void init(){
 	my_game_map.update_chunk();
 	my_player.setup_model();
 	my_player.player_model.texture = "img/Alien.png";
+	my_enemy.init();
 	
 
 }
@@ -143,6 +144,10 @@ void Input(){//do stuff with keybord inputs
 	//transformation of camera
 	//and player rotation
 	glm::vec3 keys_vector = {0.0f,0.0f,0.0f};
+	glm::vec3 direction(0.0f);
+	float angle;
+	
+	
 	if(keys[SDLK_w]){
 		keys_vector.z += 1;
 	}
@@ -157,11 +162,13 @@ void Input(){//do stuff with keybord inputs
 	}
 	
 	
-	glm::vec3 direction(0.0f);
 	//normalize the vector only if the retun insn't -nan
 	if(keys_vector.x!=0||keys_vector.y!=0||keys_vector.z!=0){
 		//callculates direction via normalising the vector
 		direction = glm::normalize(keys_vector);
+		//calculate the angle of the player
+		angle = glm::degrees(atan2(direction.z,-direction.x));
+		my_player.rot.y = angle+90;
 	}
 	
 	//cheak for wallcolition seperate on the x and y axe
@@ -173,11 +180,7 @@ void Input(){//do stuff with keybord inputs
 		direction.z = 0;
 	}
 	
-	//calculate the angle of the player
-	float angle = glm::degrees(atan2(direction.z,-direction.x));
-	
-	//update position and rotation of the player
-	my_player.rot.y = angle+90;
+	//update position of the player and the camera
 	CameraObject.move(direction,my_player.speed);
 	
 	CameraObject.rotation.x = 70;
@@ -197,6 +200,7 @@ void update(){
 	//update player
 	Input();
 	my_player.update();
+	my_enemy.update();
 }
 
 void pre_draw(){
@@ -247,7 +251,21 @@ int main(){
 		ShaderModelObject.update();
 		my_player.player_model.draw();
 		
-		//debug please remove
+		//draw enemy
+		my_enemy.player_model.setup_mesh();
+		update_textures(my_enemy.player_model.texture);
+		CameraObject.update();
+		
+		
+		ShaderModelObject.position = glm::vec3(
+			my_enemy.pos.x,
+			my_enemy.pos.y,
+			my_enemy.pos.z);
+		
+		ShaderModelObject.rotation = {0.0f,0.0f,0.0f};//my_player.rot;
+		ShaderModelObject.update();
+		my_enemy.player_model.draw();
+		
 		
 		//draw room
 		my_mesh.setup_mesh();

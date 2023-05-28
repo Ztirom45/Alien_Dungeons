@@ -133,8 +133,6 @@ class mesh{
 		};
 		
 		void add_cube(vec3f pos,std::vector<RectF> page_texture,vec6b enabled_pages,float cube_size){
-			
-			printf("%d: %f\n",page_texture.size(),page_texture[4].w);
 			//resize
 			int quad_last_size = vertex_pos.size()/3;
 			//number of quads to draw

@@ -1,4 +1,4 @@
-class entity{
+class player{
 	public:
 		glm::vec3 pos = glm::vec3(0.0f,-8.0f,-3.0f);//offset form camera pos
 		glm::vec3 rot = glm::vec3(0.0f,0.0f,0.0f);//rotation of player model
@@ -16,6 +16,11 @@ class entity{
 				(pos.x-offset_pos.x-hitbox.x+hitbox.w)/2,
 				(pos.z-offset_pos.y-hitbox.y+hitbox.h)/2
 			};
+		};
+		void set_rect(RectF Rect,glm::vec2 offset_pos){
+			//calculate pos from rect
+			pos.x = Rect.x*2+offset_pos.x+hitbox.x+hitbox.w;
+			pos.z = Rect.y*2+offset_pos.y+hitbox.y+hitbox.h;
 		};
 		
 		void setup_model(){
@@ -112,7 +117,7 @@ class entity{
 			if(speed.x<0){
 				//left front corner
 				if(RoomData[room_index][(int)Current_Rect.x][(int)Current_Rect.y]==2){return 1;}
-				//left back corner
+				//left back cornere
 				if(RoomData[room_index][(int)Current_Rect.x][(int)Current_Rect.h]==2){return 1;}
 			}
 			
@@ -141,86 +146,99 @@ class entity{
 			}
 		};
 };
-/*
-class enemy: public entity{
+
+static player my_player;
+
+class enemy: public player{
 	public:
 		path_finder pf;
 		int path_pos = 0;
 		vec2i LastPlayerPos = {0,0};
+		
+		void init(){
+			pos = glm::vec3(5.0f,4.0f,5.0f);
+			setup_model();
+			player_model.texture = "img/Alien.png";
+		}
 		
 		void update_path(RectF PlayerRect){
 			//find_path() only if player updated position
 			if(PlayerRect.x!=LastPlayerPos.x
 			 ||PlayerRect.y!=LastPlayerPos.y){
 				
-				//path finder stuff
+				//reset pathfinder
 				pf.reset({(int)PlayerRect.x,(int)PlayerRect.y},my_game_map.room_array_data[(int)my_game_map.pos.x][(int)my_game_map.pos.y]);
-				pf.find_path((int)PlayerRect.x,(int)PlayerRect.y);
+				
+				//find path
+				RectF current_rect = get_rect({0,0});
+				
+				pf.find_path((int)current_rect.x,(int)current_rect.y);
 				
 				//reset vars
 				LastPlayerPos.x = PlayerRect.x;
 				LastPlayerPos.y = PlayerRect.y;
 				path_pos = 1;
+				
 			}
 		};
 		
 		
-		void follow_path(){
-			glm::vec2 goal = pf.path[path_pos];
-			RectF OwnRect = get_rect
+		void follow_path(void){
+			glm::vec2 goal = {(float)pf.path[path_pos].x,(float)pf.path[path_pos].y};//= pf.path_pos[n] dosn't work
+			RectF current_rect = get_rect({0,0});
+			
 			//Down
-			if(rect_dsp.y<goal.y){
-				if(rect_dsp.y-goal.y<-speed){
-					rect_dsp.y +=speed;
+			if(current_rect.y<goal.y){
+				if(current_rect.y-goal.y<-speed){
+					current_rect.y +=speed;
 				}else{
-					rect_dsp.y = goal.y;
+					current_rect.y = goal.y;
 				}
-				rect_img.y = 0;//row 0
 			}
 			
 			
 			//Up
-			if(rect_dsp.y>goal.y){
-				if(rect_dsp.y-goal.y>speed){
-					rect_dsp.y -=speed;
+			if(current_rect.y>goal.y){
+				if(current_rect.y-goal.y>speed){
+					current_rect.y -=speed;
 				}else{
-					rect_dsp.y = goal.y;
+					current_rect.y = goal.y;
 				}
-				rect_img.y = 3*rect_img.h;//row 3
-			}
-			//Right
-			if(rect_dsp.x<goal.x){
-				if(rect_dsp.x-goal.x<-speed){
-					rect_dsp.x += speed;
-				}else{
-					rect_dsp.x = goal.x;
-				}
-				rect_img.y = 2*rect_img.h;//row 2
-			}
-			//Left
-			if(rect_dsp.x>goal.x){
-				if(rect_dsp.x-goal.x>speed){
-					rect_dsp.x -=speed;
-				}else{
-					rect_dsp.x = goal.x;
-				}
-				rect_img.y = rect_img.h;//row 1
 			}
 			
-			if(rect_dsp.x==goal.x&&rect_dsp.y==goal.y){
+			//Right
+			if(current_rect.x<goal.x){
+				if(current_rect.x-goal.x<-speed){
+					current_rect.x += speed;
+				}else{
+					current_rect.x = goal.x;
+				}
+			}
+			
+			//Left
+			if(current_rect.x>goal.x){
+				if(current_rect.x-goal.x>speed){
+					current_rect.x -=speed;
+				}else{
+					current_rect.x = goal.x;
+				}
+			}
+			
+			if(current_rect.x==goal.x&&current_rect.y==goal.y){
 				if(path_pos!=pf.path.size()-1){
 					path_pos++;
 				}
 			}
 			
+			//printf("e:%f %f\n",current_rect.x,current_rect.y);
+			//printf("g:%f %f\n",goal.x,goal.y);
+			set_rect(current_rect,{0.0f,0.0f});
 		};
 		
-		void update(){
+		void update(void){
 			//find path
-			
-			
-			
-			//follow_path();
+			update_path(my_player.get_rect({CameraObject.position.x,CameraObject.position.z}));
+			follow_path();
 		
 			//lives
 			if(lives<=0){
@@ -231,7 +249,6 @@ class enemy: public entity{
 };
 
 static enemy my_enemy;
-*/
 
-static entity my_player;
+
 
