@@ -9,8 +9,16 @@ one of my one python games rewritten in C++ with SDL
 - animation system
 - path finder
 
+##### requred packages(Linux)
+- SDL2_image
+- SDL2_image-devel
+- SDL2_ttf
+- SDL2_ttf-devel
+- freeglut-devel
+- glm-devel
 
-##### Building (Linux only)
+##### Building (Linux)
+
 
 - compile: `$ make`
 - run: `$ ./bin/main`
