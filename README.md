@@ -1,16 +1,14 @@
 # Alien_Dungeons
-one of my one python games rewritten in C++ with SDL
-
-![screenshot](https://github.com/Ztirom45/Alien_Dungeons/blob/main/screenshots/screenshot2.png)
+one of my one python games rewritten in C++ using SDL, glad and glm
+![screenshot]SC1
 
 ##### Features
 
-- room system
-- animation system
+- 3D engine
 - path finder
-
+- room system
 
 ##### Building (Linux only)
 
 - compile: `$ make`
-- run: `$ ./bin/main`
+- run: `$ ./main`
