@@ -1,6 +1,6 @@
 # Alien_Dungeons
 one of my one python games rewritten in C++ using SDL, glad and glm
-![screenshot]SC1
+![screenshot]https://github.com/Ztirom45/Alien_Dungeons/blob/main/screenshots/SC1.png
 
 ##### Features
 
