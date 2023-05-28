@@ -1,54 +1,7 @@
 //room system liberry
 #include "room_data.hpp"
 
-class room{
-	public:
-		int data;
-		std::string image;
-		SDL_Rect rect_dsp;
-		SDL_Rect rect_img;
-		
-		
-		void update_texture(std::string new_image){
-			if(image != new_image){
-				image = new_image;
-				SDL_QueryTexture(textures[image], NULL, NULL, &rect_img.w, &rect_img.h);
-				rect_dsp.w = rect_img.w*Scale;
-				rect_dsp.h = rect_img.h*Scale;
-				
-				rect_img.x = 0;
-				rect_img.y = 0;
-				rect_dsp.x = 0;
-				rect_dsp.y = 0;
-			}
-		};
-		
-		void init(int new_data){
-			data = new_data;
-			update_texture("img/tiles.png");
-		};
-		
-		void draw(){
-			SDL_Rect tile_rect_img;
-			SDL_Rect tile_rect_dsp;
-			tile_rect_img.x = 0;
-			tile_rect_img.y = 0;
-			tile_rect_img.w = TileImgSize;
-			tile_rect_img.h = TileImgSize;
-			tile_rect_dsp.w = TileImgSize*Scale;
-			tile_rect_dsp.h = TileImgSize*Scale;
-			
-			for(int y=0;y<Room_H;y++){
-				for(int x=0;x<Room_W;x++){
-					tile_rect_img.x = RoomData[data][x][y]*TileImgSize;
-					tile_rect_dsp.x = x*TileImgSize*Scale;
-					tile_rect_dsp.y = y*TileImgSize*Scale;
-					SDL_RenderCopy(rend,textures[image],&tile_rect_img, &tile_rect_dsp);
-				}
-			}
-		};
-};
-class map{
+class game_map{
 	public:
 		int room_array_data[3][3] = {
 			{0,1,2},
@@ -56,21 +9,25 @@ class map{
 			{6,7,8}
 		};
 		
-		room room_array[3][3];
+		glm::vec2 pos = {(int)1,(int)1};
 		
-		vec2i pos = {1,1};
-		
-		void init(){
-			for(int x=0;x<3;x++){
-				for(int y=0;y<3;y++){
-					room_array[x][y].init(room_array_data[x][y]);
+		void update_chunk(){
+			my_chunk.clear();
+			for(int x=0;x<=Room_W-1;x++){
+				for(int y=0;y<=Room_H-1;y++){
+					Uint8 block_type = RoomData[room_array_data[(int)pos.x][(int)pos.y]][x][y];
+					//add floor everytime
+					my_chunk.data[x+1][1][y+1] = block_type;
+					//if type = wall add to wall blocks
+					if(block_type == 2){
+						my_chunk.data[x+1][2][y+1] = block_type;
+						my_chunk.data[x+1][3][y+1] = block_type;
+					}
 				}
 			}
-		};
-		
-		void draw(){
-			room_array[pos.x][pos.y].draw();
+			my_chunk.add_to_mesh();
 		}
+		
 };
 
-static map my_map;
+static game_map my_game_map;

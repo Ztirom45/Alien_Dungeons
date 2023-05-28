@@ -1,106 +1,289 @@
-//TODO: player.hpp: player::walk
+//compile: `$ make`
+
+#define NDEBUG //other wise nolise would not work because assert(a!=b) doesn't work
+
 //SDL
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
-#include <SDL2/SDL_timer.h>
+//OGL
 
-//c++ libs
-#include <string>
+#include <glad/glad.h>
+
+#include <glm/glm.hpp>
+#include <glm/trigonometric.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/ext.hpp>
+#include <glm/ext/scalar_constants.hpp>
+#include <glm/gtx/string_cast.hpp>
+
+//STD
+#include <iostream>
+#include <fstream>
+#include <vector>
 #include <map>
+#include <string>
 #include <dirent.h>
 #include <iostream>
-#include <vector>
+#include <stdio.h>
+#include <stdlib.h>
 
-//mocros
-#define KEY_W 119
-#define KEY_A 97
-#define KEY_S 115
-#define KEY_D 100
-#define KEY_SPACE 32
+
+
+
+//config
+#define Win_W 1024
+#define Win_H 780
 
 //static vars
-static bool loop = true;//mainloop
-static SDL_Renderer* rend;
-static bool keys[256];//sizeof Uint8 cant't use non letter keys
+static bool loop = true;
+static bool keys[1073741824] = {0};//(2^30)
 
-//own libs
+//Win vars
+static SDL_Window* screen;
+static SDL_GLContext GLContext;
+
+//VAO (vertex array object)
+static GLuint VertexArrayObject;
+
+//VBO (vertex buffer object)
+static GLuint VertexBufferObject;//positions
+static GLuint VertexBufferObject2;//colors
+static GLuint VertexBufferObject3;//textures
+
+//texutres set name:data
+static std::map<std::string, GLuint> textures;
+
 #include "config.hpp"
-#include "cvec.hpp"
+#include "types.hpp"
 #include "images.hpp"
+#include "mesh.hpp"
+#include "shader.hpp"
+#include "camera.hpp"
+#include "shader_models.hpp"
+#include "block_types.hpp"
+#include "chunk.hpp"
 #include "rooms.hpp"
-#include "player.hpp"
 #include "path_finder.hpp"
-#include "entity.hpp"
+#include "player.hpp"
 
 
-
-
-void init(){
-	//init
-	SDL_Init(SDL_INIT_EVERYTHING);
-	//create window
-	SDL_Window* win = SDL_CreateWindow("Alien Dungeons - rewritten in c++",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,WIN_W,WIN_H, 0);
-	//create renderer
-	Uint32 render_flags = SDL_RENDERER_ACCELERATED;
-	rend = SDL_CreateRenderer(win,-1,render_flags);
+void GetOpenGLVersionInfo(){
+	std::cout << "Vendor:				" << glGetString(GL_VENDOR) <<"\n";
+	std::cout << "Renderer:			" << glGetString(GL_RENDERER) <<"\n";
+	std::cout << "Version:			" << glGetString(GL_VERSION) <<"\n";
+	std::cout << "Shading Language:		" << glGetString(GL_SHADING_LANGUAGE_VERSION) <<"\n";
 	
-	load_images();
+	
+	
 }
 
-void events(){
+void init(){
+	//init stuff
+	SDL_Init(SDL_INIT_VIDEO);
+
+	//gl Atributs
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION,4);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION,1);
+	
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK,SDL_GL_CONTEXT_PROFILE_CORE);
+	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER,1);
+	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE,24);//24bit DepthBuffer
+	
+	//create open gl window
+	screen = SDL_CreateWindow("SDL+OGL",0,32,Win_W,Win_H,SDL_WINDOW_OPENGL);
+	
+	//create ogl context
+	GLContext = SDL_GL_CreateContext(screen);
+	
+	//init glad lib
+	if(!gladLoadGLLoader(SDL_GL_GetProcAddress)){
+		std::cout << "can't init glad\n";
+		exit(1);
+	}
+	
+	//load image
+	load_GL_textures();
+	
+	//print version
+	GetOpenGLVersionInfo();
+	
+	//Enable shuff
+	glEnable(GL_TEXTURE_2D);
+	
+	//setup stuff
+	my_game_map.update_chunk();
+	my_player.setup_model();
+	my_player.player_model.texture = "img/Alien.png";
+	my_enemy.init();
+	
+
+}
+
+void events(){//get input events
 		//events
 		SDL_Event event;
 		const Uint8 *keyboard_state_array = SDL_GetKeyboardState(NULL);
 		while (SDL_PollEvent(&event)) {
 			switch (event.type) {
-
-			case SDL_QUIT:
-				loop = false;
-				break;
-			case SDL_KEYDOWN:
-				if(event.key.keysym.sym<256){keys[event.key.keysym.sym] = true;}
-				break;
-			case SDL_KEYUP:
-				if(event.key.keysym.sym<256){keys[event.key.keysym.sym] = false;}
-				break;
-			default:
-				break;
+				case SDL_QUIT:
+					loop = false;
+					break;
+				case SDL_KEYDOWN:
+					keys[event.key.keysym.sym] = true;
+					break;
+				case SDL_KEYUP:
+					keys[event.key.keysym.sym] = false;
+					break;
+				default:
+					break;
 			}
 		}
 }
 
+void Input(){//do stuff with keybord inputs
+	//transformation of camera
+	//and player rotation
+	glm::vec3 keys_vector = {0.0f,0.0f,0.0f};
+	glm::vec3 direction(0.0f);
+	float angle;
+	
+	
+	if(keys[SDLK_w]){
+		keys_vector.z += 1;
+	}
+	if(keys[SDLK_s]){
+		keys_vector.z -= 1;
+	}
+	if(keys[SDLK_a]){
+		keys_vector.x += 1;
+	}
+	if(keys[SDLK_d]){
+		keys_vector.x -= 1;
+	}
+	
+	
+	//normalize the vector only if the retun insn't -nan
+	if(keys_vector.x!=0||keys_vector.y!=0||keys_vector.z!=0){
+		//callculates direction via normalising the vector
+		direction = glm::normalize(keys_vector);
+		//calculate the angle of the player
+		angle = glm::degrees(atan2(direction.z,-direction.x));
+		my_player.rot.y = angle+90;
+	}
+	
+	//cheak for wallcolition seperate on the x and y axe
+	if(my_player.in_wall(CameraObject.position,{-direction.x*my_player.speed,0.0f})){
+		direction.x = 0;
+	}
+	
+	if(my_player.in_wall(CameraObject.position,{0.0f,-direction.z*my_player.speed})){
+		direction.z = 0;
+	}
+	
+	//update position of the player and the camera
+	CameraObject.move(direction,my_player.speed);
+	
+	CameraObject.rotation.x = 70;
+}
+
+void clean(){
+	SDL_DestroyWindow(screen);
+	
+	SDL_Quit();
+
+}
+
+void update(){
+	//key events
+	events();
+	
+	//update player
+	Input();
+	my_player.update();
+	my_enemy.update();
+}
+
+void pre_draw(){
+	//setup mesh
+	
+	glDisable(GL_DEPTH_TEST);
+	glDisable(GL_CULL_FACE);
+	
+	glViewport(0,0,Win_W,Win_H);
+	glClearColor(1.f,1.f,0.f,1.f);
+	glClear(GL_DEPTH_BUFFER_BIT|GL_COLOR_BUFFER_BIT);
+	
+	
+}
+
 int main(){
-	//init
+	// 1. Setup graphics program 
 	init();
 	
-	//player settings 
-	my_player.init("img/Alien.png");
+	// 2. Setup geometry
+	my_mesh.setup_mesh();
 	
-	//enemy settings 
-	my_enemy.init("img/Alien.png");
+	//3. Create shader
+	ShaderObject.load_fs_file("src/shader.fs");
+	ShaderObject.load_vs_file("src/shader.vs");
+	ShaderObject.CreateShader();
 	
-	//rooms settings
-	my_map.init();
-	
-	//gameloop
+	//4. main loop
 	while(loop){
-		//update
-		events();
-		my_player.update();
+		update();
 		
-		//draw
-		SDL_RenderClear(rend);
+		pre_draw();
 		
-		my_map.draw();
-		my_player.draw();
-		my_enemy.update();
-		my_enemy.draw();
+		glEnable(GL_DEPTH_TEST);
+		
+		//draw player
+		my_player.player_model.setup_mesh();
+		update_textures(my_player.player_model.texture);
+		CameraObject.update();
 		
 		
-		SDL_RenderPresent(rend);
-		SDL_Delay(1000/60);//60 fps
+		ShaderModelObject.position = glm::vec3(
+			my_player.pos.x-CameraObject.position.x,
+			my_player.pos.y-CameraObject.position.y,
+			my_player.pos.z-CameraObject.position.z);
+		
+		ShaderModelObject.rotation = my_player.rot;
+		ShaderModelObject.update();
+		my_player.player_model.draw();
+		
+		//draw enemy
+		my_enemy.player_model.setup_mesh();
+		update_textures(my_enemy.player_model.texture);
+		CameraObject.update();
+		
+		
+		ShaderModelObject.position = glm::vec3(
+			my_enemy.pos.x,
+			my_enemy.pos.y,
+			my_enemy.pos.z);
+		
+		ShaderModelObject.rotation = {0.0f,0.0f,0.0f};//my_player.rot;
+		ShaderModelObject.update();
+		my_enemy.player_model.draw();
+		
+		
+		//draw room
+		my_mesh.setup_mesh();
+		update_textures(my_mesh.texture);
+		CameraObject.update();
+		ShaderModelObject.position = {0,0,0};
+		ShaderModelObject.rotation = {0,0,0};
+		ShaderModelObject.update();
+		my_mesh.draw();
+
+		glDisable(GL_DEPTH_TEST);
+
+		glUseProgram(ShaderObject.ShaderProgramm);
+		
+		//Update Screen
+		SDL_GL_SwapWindow(screen);
 	}
-	//destory memory stuff
-	distroy_images();
-	SDL_Quit();
+	
+	//5. clean
+	clean();
 }
