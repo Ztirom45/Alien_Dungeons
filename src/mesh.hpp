@@ -17,7 +17,7 @@ class mesh{
 		
 		std::string texture = "img/tiles32.png";
 		
-		void add_point(vec3f pos,vec3f col,vec2f tex,int position){//if posion == 0 resize else add to position
+		void add_point(glm::vec3 pos,glm::vec3 col,glm::vec2 tex,int position){//if posion == 0 resize else add to position
 			//resize and get loacation
 			
 			if(position==-1){//save performence if a rect resizes only one time
@@ -84,7 +84,7 @@ class mesh{
 		};
 		
 		//pages: Buttom,Down,Left,Front,Top,Right
-		void add_cube(vec3f pos,vec6i page_texture,vec6b enabled_pages){
+		void add_cube(glm::vec3 pos,vec6i page_texture,vec6b enabled_pages){
 			
 			//resize
 			int quad_last_size = vertex_pos.size()/3;
@@ -132,7 +132,7 @@ class mesh{
 			
 		};
 		
-		void add_cube(vec3f pos,std::vector<RectF> page_texture,vec6b enabled_pages,float cube_size){
+		void add_cube(glm::vec3 pos,std::vector<RectF> page_texture,vec6b enabled_pages,float cube_size){
 			//resize
 			int quad_last_size = vertex_pos.size()/3;
 			//number of quads to draw
@@ -179,7 +179,7 @@ class mesh{
 			
 		};
 		
-		void add_cube(vec3f pos,std::vector<RectF> page_texture,vec6b enabled_pages,float cube_size,vec3f scale){
+		void add_cube(glm::vec3 pos,std::vector<RectF> page_texture,vec6b enabled_pages,float cube_size,glm::vec3 scale){
 			
 			printf("%d: %f\n",page_texture.size(),page_texture[4].w);
 			//resize

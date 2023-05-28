@@ -153,7 +153,7 @@ class enemy: public player{
 	public:
 		path_finder pf;
 		int path_pos = 0;
-		vec2i LastPlayerPos = {0,0};
+		glm::vec2 LastPlayerPos = {0,0};
 		
 		void init(){
 			pos = glm::vec3(5.0f,4.0f,5.0f);
