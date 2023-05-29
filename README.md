@@ -12,3 +12,4 @@ one of my one python games rewritten in C++ using SDL, glad and glm
 
 - compile: `$ make`
 - run: `$ ./main`
+  
