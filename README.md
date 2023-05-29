@@ -5,11 +5,12 @@ one of my one python games rewritten in C++ using SDL, glad and glm
 ##### Features
 
 - 3D engine
-- path finder
+- enemy with path finder
 - room system
 
 ##### Building (Linux only)
-
+# make sure you've installed SDL and glm
 - compile: `$ make`
 - run: `$ ./main`
+
   
