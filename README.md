@@ -9,7 +9,7 @@ one of my one python games rewritten in C++ using SDL, glad and glm
 - room system
 
 ##### Building (Linux only)
-# make sure you've installed SDL and glm
+###### make sure you've installed SDL and glm
 - compile: `$ make`
 - run: `$ ./main`
 
