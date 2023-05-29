@@ -17,6 +17,7 @@ class player{
 				(pos.z-offset_pos.y-hitbox.y+hitbox.h)/2
 			};
 		};
+
 		void set_rect(RectF Rect,glm::vec2 offset_pos){
 			//calculate pos from rect
 			pos.x = Rect.x*2+offset_pos.x+hitbox.x+hitbox.w;
@@ -157,8 +158,9 @@ class enemy: public player{
 		
 		void init(){
 			pos = glm::vec3(5.0f,4.0f,5.0f);
+			speed = 0.045;
 			setup_model();
-			player_model.texture = "img/Alien.png";
+			player_model.texture = "img/Alien2.png";
 		}
 		
 		void update_path(RectF PlayerRect){
@@ -186,6 +188,7 @@ class enemy: public player{
 		void follow_path(void){
 			glm::vec2 goal = {(float)pf.path[path_pos].x,(float)pf.path[path_pos].y};//= pf.path_pos[n] dosn't work
 			RectF current_rect = get_rect({0,0});
+			glm::vec2 rect_before = {current_rect.x,current_rect.y};
 			
 			//Down
 			if(current_rect.y<goal.y){
@@ -230,9 +233,15 @@ class enemy: public player{
 				}
 			}
 			
-			//printf("e:%f %f\n",current_rect.x,current_rect.y);
-			//printf("g:%f %f\n",goal.x,goal.y);
+			//calculate direction of player and set angle to it
+			glm::vec2 direction = {0,0};
+			direction.x = current_rect.x-rect_before.x;
+			direction.y = current_rect.y-rect_before.y;
+			
+			//set position and angle
+			rot.y = glm::degrees(atan2(direction.y,-direction.x))-90;
 			set_rect(current_rect,{0.0f,0.0f});
+			
 		};
 		
 		void update(void){

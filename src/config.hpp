@@ -18,3 +18,6 @@
 //colision
 #define doColision 1
 
+//chunks
+#define ChunkX 1
+#define ChunkY 1

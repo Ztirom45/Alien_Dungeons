@@ -225,7 +225,6 @@ class mesh{
 				add_rect((RectF){pos.y,pos.z,cube_size*scale.y,cube_size*scale.z},pos.x+cube_size*scale.x,3,page_texture[5],quad_last_size+6*page_counter);
 				page_counter++;
 			}
-			
 		};
 		
 		void setup_mesh(){

@@ -50,6 +50,7 @@ class shader{
 			//error messages
 			GLint success;
 			glGetShaderiv(shaderObject, GL_COMPILE_STATUS, &success);
+			
 			if (success != GL_TRUE) {
 				GLint info_log_length;
 				glGetShaderiv(shaderObject, GL_INFO_LOG_LENGTH, &info_log_length);
@@ -60,13 +61,14 @@ class shader{
 				GLchar* info_log;
 				info_log = (GLchar*)malloc(log_len_size);
 				glGetShaderInfoLog(shaderObject, info_log_length, NULL, info_log);
-
+				
 				printf("failed to compile shader:\n%s\n", info_log);
 				free(info_log);
 			}else{
-				std::cout << "copilation succes\n";
+				printf("compilation success\n");//no error
+				//std::cout << "compilation success\n";//error
 			}
-		
+			
 			return shaderObject;
 		};
 

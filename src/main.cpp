@@ -1,3 +1,5 @@
+//TODO: optimize RAM
+//TODO: room_pos(WTF)
 //compile: `$ make`
 
 #define NDEBUG //other wise nolise would not work because assert(a!=b) doesn't work
@@ -111,10 +113,11 @@ void init(){
 	glEnable(GL_TEXTURE_2D);
 	
 	//setup stuff
-	my_game_map.update_chunk();
+	//my_game_map.init();
 	my_player.setup_model();
 	my_player.player_model.texture = "img/Alien.png";
 	my_enemy.init();
+	my_game_map.init();
 	
 
 }
@@ -223,6 +226,7 @@ int main(){
 	// 2. Setup geometry
 	my_mesh.setup_mesh();
 	
+	
 	//3. Create shader
 	ShaderObject.load_fs_file("src/shader.fs");
 	ShaderObject.load_vs_file("src/shader.vs");
@@ -262,7 +266,7 @@ int main(){
 			my_enemy.pos.y,
 			my_enemy.pos.z);
 		
-		ShaderModelObject.rotation = {0.0f,0.0f,0.0f};//my_player.rot;
+		ShaderModelObject.rotation = my_enemy.rot;
 		ShaderModelObject.update();
 		my_enemy.player_model.draw();
 		
