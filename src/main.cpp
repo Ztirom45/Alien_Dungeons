@@ -1,5 +1,4 @@
 //TODO: optimize RAM
-//TODO: room_pos(WTF)
 //compile: `$ make`
 
 #define NDEBUG //other wise nolise would not work because assert(a!=b) doesn't work
@@ -79,6 +78,14 @@ void GetOpenGLVersionInfo(){
 	
 }
 
+void setup_pipeline(){
+		
+		glGenBuffers(1,&VertexBufferObject);
+		glGenBuffers(1,&VertexBufferObject2);
+		glGenBuffers(1,&VertexBufferObject3);
+}
+
+
 void init(){
 	//init stuff
 	SDL_Init(SDL_INIT_VIDEO);
@@ -111,6 +118,9 @@ void init(){
 	
 	//Enable shuff
 	glEnable(GL_TEXTURE_2D);
+	
+	//setup graphics
+	setup_pipeline();
 	
 	//setup stuff
 	//my_game_map.init();
@@ -191,7 +201,6 @@ void Input(){//do stuff with keybord inputs
 
 void clean(){
 	SDL_DestroyWindow(screen);
-	
 	SDL_Quit();
 
 }
@@ -234,7 +243,9 @@ int main(){
 	
 	//4. main loop
 	while(loop){
+		
 		update();
+		
 		
 		pre_draw();
 		
@@ -279,7 +290,7 @@ int main(){
 		ShaderModelObject.rotation = {0,0,0};
 		ShaderModelObject.update();
 		my_mesh.draw();
-
+		
 		glDisable(GL_DEPTH_TEST);
 
 		glUseProgram(ShaderObject.ShaderProgramm);

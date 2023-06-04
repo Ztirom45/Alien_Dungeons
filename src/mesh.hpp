@@ -1,13 +1,6 @@
 /*
 mesh stores vertexcdata and have got add functions
 */
-/*
-textures[] = {
-{},
-{},
-{},
-};
-*/
 
 class mesh{
 	public:
@@ -181,7 +174,6 @@ class mesh{
 		
 		void add_cube(glm::vec3 pos,std::vector<RectF> page_texture,vec6b enabled_pages,float cube_size,glm::vec3 scale){
 			
-			printf("%d: %f\n",page_texture.size(),page_texture[4].w);
 			//resize
 			int quad_last_size = vertex_pos.size()/3;
 			//number of quads to draw
@@ -228,17 +220,16 @@ class mesh{
 		};
 		
 		void setup_mesh(){
-			//genereate VAO
+			//genereate VAOs
 			glGenVertexArrays(1,&VertexArrayObject);
 			glBindVertexArray(VertexArrayObject);
-			
 			//generate position VBO at 0
-			glGenBuffers(1,&VertexBufferObject);
+
 			glBindBuffer(GL_ARRAY_BUFFER,VertexBufferObject);
 			glBufferData(GL_ARRAY_BUFFER,
 				vertex_pos.size()*sizeof(GLfloat),
 				vertex_pos.data(),
-				GL_STATIC_DRAW);
+				GL_DYNAMIC_DRAW);
 			
 			//linking up the position array
 			glEnableVertexAttribArray(0);
@@ -251,12 +242,11 @@ class mesh{
 			);
 				
 			//generate color VBO
-			glGenBuffers(1,&VertexBufferObject2);
 			glBindBuffer(GL_ARRAY_BUFFER,VertexBufferObject2);
 			glBufferData(GL_ARRAY_BUFFER,
 				vertex_col.size()*sizeof(GLfloat),
 				vertex_col.data(),
-				GL_STATIC_DRAW);
+				GL_DYNAMIC_DRAW);
 			
 			//linking up the color array
 			glEnableVertexAttribArray(1);
@@ -269,12 +259,11 @@ class mesh{
 			);
 
 			//generate texture VBO
-			glGenBuffers(1,&VertexBufferObject3);
 			glBindBuffer(GL_ARRAY_BUFFER,VertexBufferObject3);
 			glBufferData(GL_ARRAY_BUFFER,
 				vertex_tex.size()*sizeof(GLfloat),
 				vertex_tex.data(),
-				GL_STATIC_DRAW);
+				GL_DYNAMIC_DRAW);
 			
 			//linking up the texture array
 			glEnableVertexAttribArray(2);

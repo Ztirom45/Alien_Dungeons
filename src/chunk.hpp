@@ -10,7 +10,6 @@ class chunk{
 				for(int y=0;y<ChunkSizeY;y++){
 					for(int z=0;z<ChunkSizeZ;z++){
 						chunk_data[x][y][z] = 0;
-						printf("%d %d %d\n",x,y,z);
 					}
 				}
 			}
