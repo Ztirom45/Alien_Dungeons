@@ -1,15 +1,16 @@
-//TODO: optimize RAM
-//compile: `$ make`
-
-#define NDEBUG //other wise nolise would not work because assert(a!=b) doesn't work
+/*
+compile:	`$ make`
+run:		`./main`
+*/
 
 //SDL
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
-//OGL
 
+//GLAD
 #include <glad/glad.h>
 
+//GLM
 #include <glm/glm.hpp>
 #include <glm/trigonometric.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -43,17 +44,10 @@ static bool keys[1073741824] = {0};//(2^30)
 static SDL_Window* screen;
 static SDL_GLContext GLContext;
 
-//VAO (vertex array object)
-static GLuint VertexArrayObject;
-
-//VBO (vertex buffer object)
-static GLuint VertexBufferObject;//positions
-static GLuint VertexBufferObject2;//colors
-static GLuint VertexBufferObject3;//textures
-
-//texutres set name:data
+//texutres_set: textures[string name] = Gluint data
 static std::map<std::string, GLuint> textures;
 
+//include stuff
 #include "config.hpp"
 #include "types.hpp"
 #include "images.hpp"
@@ -67,24 +61,13 @@ static std::map<std::string, GLuint> textures;
 #include "path_finder.hpp"
 #include "player.hpp"
 
-
+//cout OpenGL version information
 void GetOpenGLVersionInfo(){
 	std::cout << "Vendor:				" << glGetString(GL_VENDOR) <<"\n";
 	std::cout << "Renderer:			" << glGetString(GL_RENDERER) <<"\n";
 	std::cout << "Version:			" << glGetString(GL_VERSION) <<"\n";
 	std::cout << "Shading Language:		" << glGetString(GL_SHADING_LANGUAGE_VERSION) <<"\n";
-	
-	
-	
 }
-
-void setup_pipeline(){
-		
-		glGenBuffers(1,&VertexBufferObject);
-		glGenBuffers(1,&VertexBufferObject2);
-		glGenBuffers(1,&VertexBufferObject3);
-}
-
 
 void init(){
 	//init stuff
@@ -119,20 +102,23 @@ void init(){
 	//Enable shuff
 	glEnable(GL_TEXTURE_2D);
 	
-	//setup graphics
-	setup_pipeline();
-	
-	//setup stuff
-	//my_game_map.init();
+	//setup player
 	my_player.setup_model();
 	my_player.player_model.texture = "img/Alien.png";
+	
+	//setup enemy
+	my_enemy.setup_model();
+	my_enemy.player_model.texture = "img/Alien2.png";
 	my_enemy.init();
+	
+	//setup map
 	my_game_map.init();
 	
 
 }
 
-void events(){//get input events
+//get input events
+void events(){
 		//events
 		SDL_Event event;
 		const Uint8 *keyboard_state_array = SDL_GetKeyboardState(NULL);
@@ -153,7 +139,8 @@ void events(){//get input events
 		}
 }
 
-void Input(){//do stuff with keybord inputs
+//do stuff with keybord inputs
+void Input(){
 	//transformation of camera
 	//and player rotation
 	glm::vec3 keys_vector = {0.0f,0.0f,0.0f};
@@ -199,12 +186,14 @@ void Input(){//do stuff with keybord inputs
 	CameraObject.rotation.x = 70;
 }
 
+//cleanup memory (TODO)
 void clean(){
 	SDL_DestroyWindow(screen);
 	SDL_Quit();
 
 }
 
+//game updates
 void update(){
 	//key events
 	events();
@@ -215,6 +204,7 @@ void update(){
 	my_enemy.update();
 }
 
+//frame updates
 void pre_draw(){
 	//setup mesh
 	
@@ -228,13 +218,17 @@ void pre_draw(){
 	
 }
 
+
 int main(){
 	// 1. Setup graphics program 
 	init();
 	
-	// 2. Setup geometry
+	// 2. Setup geometry (setup method definitely doesn't work the right way TODO)
+	my_player.player_model.setup_mesh();
 	my_mesh.setup_mesh();
-	
+	my_enemy.player_model.setup_mesh();
+	my_mesh.setup_mesh();
+	my_player.player_model.setup_mesh();
 	
 	//3. Create shader
 	ShaderObject.load_fs_file("src/shader.fs");
@@ -252,7 +246,7 @@ int main(){
 		glEnable(GL_DEPTH_TEST);
 		
 		//draw player
-		my_player.player_model.setup_mesh();
+		
 		update_textures(my_player.player_model.texture);
 		CameraObject.update();
 		
@@ -266,11 +260,10 @@ int main(){
 		ShaderModelObject.update();
 		my_player.player_model.draw();
 		
+		
 		//draw enemy
-		my_enemy.player_model.setup_mesh();
 		update_textures(my_enemy.player_model.texture);
 		CameraObject.update();
-		
 		
 		ShaderModelObject.position = glm::vec3(
 			my_enemy.pos.x,
@@ -283,7 +276,6 @@ int main(){
 		
 		
 		//draw room
-		my_mesh.setup_mesh();
 		update_textures(my_mesh.texture);
 		CameraObject.update();
 		ShaderModelObject.position = {0,0,0};

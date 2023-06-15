@@ -4,6 +4,13 @@ mesh stores vertexcdata and have got add functions
 
 class mesh{
 	public:
+		//VAO (vertex array object)
+		GLuint VertexArrayObject;
+
+		//VBO (vertex buffer object)
+		GLuint VertexBufferObject;//positions
+		GLuint VertexBufferObject2;//colors
+		GLuint VertexBufferObject3;//textures
 		std::vector<GLfloat> vertex_pos = {};
 		std::vector<GLfloat> vertex_col = {};
 		std::vector<GLfloat> vertex_tex = {};
@@ -220,9 +227,16 @@ class mesh{
 		};
 		
 		void setup_mesh(){
+			
 			//genereate VAOs
 			glGenVertexArrays(1,&VertexArrayObject);
 			glBindVertexArray(VertexArrayObject);
+
+			//generate Vertexbuffers
+			glGenBuffers(1,&VertexBufferObject);
+			glGenBuffers(1,&VertexBufferObject2);
+			glGenBuffers(1,&VertexBufferObject3);
+			
 			//generate position VBO at 0
 
 			glBindBuffer(GL_ARRAY_BUFFER,VertexBufferObject);
@@ -241,6 +255,7 @@ class mesh{
 									(void*)0
 			);
 				
+			
 			//generate color VBO
 			glBindBuffer(GL_ARRAY_BUFFER,VertexBufferObject2);
 			glBufferData(GL_ARRAY_BUFFER,
@@ -257,7 +272,8 @@ class mesh{
 									0,
 									(void*)0//offset
 			);
-
+			
+			
 			//generate texture VBO
 			glBindBuffer(GL_ARRAY_BUFFER,VertexBufferObject3);
 			glBufferData(GL_ARRAY_BUFFER,
@@ -275,6 +291,7 @@ class mesh{
 									(void*)0//offset
 			);
 			
+			
 			//unbind Vertex array
 			glBindVertexArray(0);
 			glBindVertexArray(1);
@@ -289,6 +306,9 @@ class mesh{
 			//send stuff to GPU:
 			glBindVertexArray(VertexArrayObject);
 			glBindBuffer(GL_ARRAY_BUFFER,VertexBufferObject);
+			glBindBuffer(GL_ARRAY_BUFFER,VertexBufferObject2);
+			glBindBuffer(GL_ARRAY_BUFFER,VertexBufferObject3);
+			
 			glDrawArrays(GL_TRIANGLES,0,vertex_pos.size());
 		}
 		
