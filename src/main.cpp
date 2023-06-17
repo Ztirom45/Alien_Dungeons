@@ -1,6 +1,7 @@
 /*
-compile:	`$ make`
-run:		`./main`
+ALIEN DUNGEONS:
+	compile:	`$ make`
+	run:		`./main`
 */
 
 //SDL
@@ -95,12 +96,13 @@ void init(){
 	
 	//load image
 	load_GL_textures();
+	glEnable(GL_TEXTURE_2D);
 	
 	//print version
 	GetOpenGLVersionInfo();
 	
-	//Enable shuff
-	glEnable(GL_TEXTURE_2D);
+	//setup map
+	my_game_map.init();
 	
 	//setup player
 	my_player.setup_model();
@@ -111,8 +113,7 @@ void init(){
 	my_enemy.player_model.texture = "img/Alien2.png";
 	my_enemy.init();
 	
-	//setup map
-	my_game_map.init();
+	
 	
 
 }

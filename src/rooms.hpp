@@ -1,6 +1,11 @@
 //room system liberry
 #include "room_data.hpp"
 
+//macros for readability
+#define RposX (int)(room_x+pos.x)
+#define RposY (int)(room_y+pos.y)
+#define CurrentChunk my_chunks[RposX][RposY]
+
 class game_map{
 	public:
 		int room_array_data[3][3] = {
@@ -8,40 +13,46 @@ class game_map{
 			{3,4,5},
 			{6,7,8}
 		};
-		chunk my_chunks[1][1] = {};
+		chunk my_chunks[ChunkViewCount*2+1][ChunkViewCount*2+1] = {};
 		
-		glm::vec2 pos = {1.0f,1.0f};
+		glm::vec2 pos = {1,1};
 		
 		void update_chunk(int room_x,int room_y){
-			printf("rpb:%f %f\n",pos.x,pos.y);
-			my_chunks[room_x][room_y].clear();
-			printf("rpa: %f %f\n",pos.x,pos.y);
-			for(int x=0;x<=Room_W-1;x++){
-				for(int y=0;y<=Room_H-1;y++){//[(int)pos.x+room_x][(int)pos.y+room_y]
-					Uint8 block_type = RoomData[room_array_data[1][1]][x][y];
-					//add floor everytime
-					my_chunk.chunk_data[x+1][1][y+1] = block_type;
-					my_chunks[room_x][room_y].chunk_data[x+1][1][y+1] = block_type;
-					//if type = wall add to wall blocks
-					if(block_type == 2){
-						my_chunk.chunk_data[x+1][2][y+1] = block_type;
-						my_chunk.chunk_data[x+1][3][y+1] = block_type;
-						my_chunks[room_x][room_y].chunk_data[x+1][2][y+1] = block_type;
-						my_chunks[room_x][room_y].chunk_data[x+1][3][y+1] = block_type;
+			if(RposX>=0 && RposX<=ChunkViewCount*2  &&  RposY>=0 && RposY<=ChunkViewCount*2){
+				CurrentChunk.clear();
+				for(int x=0;x<=Room_W-1;x++){
+					for(int y=0;y<=Room_H-1;y++){
+						Uint8 block_type = RoomData[room_array_data[RposX][RposY]][x][y];
+						//add floor everytime
+						CurrentChunk.chunk_data[x+1][1][y+1] = block_type;
+						
+						CurrentChunk.chunk_data[x+1][1][y+1] = block_type;
+						//if type = wall add to wall blocks
+						if(block_type == 2){
+							CurrentChunk.chunk_data[x+1][2][y+1] = block_type;
+							CurrentChunk.chunk_data[x+1][3][y+1] = block_type;
+							CurrentChunk.chunk_data[x+1][2][y+1] = block_type;
+							CurrentChunk.chunk_data[x+1][3][y+1] = block_type;
+						}
 					}
 				}
 			}
-			my_chunks[room_x][room_y].add_to_mesh();
+			CurrentChunk.c_pos = {room_x,room_y};
+			CurrentChunk.add_to_mesh();
+			
 		};
 		
 		void update(){
-			update_chunk(0,0);
+			for(int x=-ChunkViewCount;x<=ChunkViewCount;x++){
+				for(int y=-ChunkViewCount;y<=ChunkViewCount;y++){
+					update_chunk(x,y);
+				}
+			}
 			
 		};
 		
 		void init(){
-			pos = {1.0f,1.0f};
-			printf("rp1: %f %f\n",pos.x,pos.y);
+			//pos = {1,1};
 			update();
 		};
 		
