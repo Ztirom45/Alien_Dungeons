@@ -53,12 +53,12 @@ static std::map<std::string, GLuint> textures;
 #include "types.hpp"
 #include "images.hpp"
 #include "mesh.hpp"
-#include "shader.hpp"
-#include "camera.hpp"
-#include "shader_models.hpp"
 #include "block_types.hpp"
 #include "chunk.hpp"
 #include "rooms.hpp"
+#include "shader.hpp"
+#include "camera.hpp"
+#include "shader_models.hpp"
 #include "path_finder.hpp"
 #include "player.hpp"
 
@@ -219,6 +219,62 @@ void pre_draw(){
 	
 }
 
+void draw_player(){
+	//draw player
+	
+	update_textures(my_player.player_model.texture);
+	CameraObject.update();
+	
+	
+	ShaderModelObject.position = glm::vec3(
+		my_player.pos.x-CameraObject.position.x,
+		my_player.pos.y-CameraObject.position.y,
+		my_player.pos.z-CameraObject.position.z);
+	
+	ShaderModelObject.rotation = my_player.rot;
+	ShaderModelObject.update();
+	my_player.player_model.draw();
+}
+
+void draw_enemy(){
+	//draw enemy
+	update_textures(my_enemy.player_model.texture);
+	CameraObject.update();
+	
+	ShaderModelObject.position = glm::vec3(
+		my_enemy.pos.x,
+		my_enemy.pos.y,
+		my_enemy.pos.z);
+	
+	ShaderModelObject.rotation = my_enemy.rot;
+	ShaderModelObject.update();
+	my_enemy.player_model.draw();
+}
+
+void draw_rooms(){
+	//draw room
+	update_textures(my_mesh.texture);
+	CameraObject.update();
+	ShaderModelObject.position = {0,0,0};
+	ShaderModelObject.rotation = {0,0,0};
+	ShaderModelObject.update();
+	my_mesh.draw();
+}
+
+void draw(){
+		//add vertex in VRam
+		glEnable(GL_DEPTH_TEST);
+		draw_player();
+		draw_enemy();
+		draw_rooms();
+		glDisable(GL_DEPTH_TEST);
+		
+		//use shader
+		glUseProgram(ShaderObject.ShaderProgramm);
+		//Update Screen
+		SDL_GL_SwapWindow(screen);
+}
+
 
 int main(){
 	// 1. Setup graphics program 
@@ -238,58 +294,9 @@ int main(){
 	
 	//4. main loop
 	while(loop){
-		
 		update();
-		
-		
 		pre_draw();
-		
-		glEnable(GL_DEPTH_TEST);
-		
-		//draw player
-		
-		update_textures(my_player.player_model.texture);
-		CameraObject.update();
-		
-		
-		ShaderModelObject.position = glm::vec3(
-			my_player.pos.x-CameraObject.position.x,
-			my_player.pos.y-CameraObject.position.y,
-			my_player.pos.z-CameraObject.position.z);
-		
-		ShaderModelObject.rotation = my_player.rot;
-		ShaderModelObject.update();
-		my_player.player_model.draw();
-		
-		
-		//draw enemy
-		update_textures(my_enemy.player_model.texture);
-		CameraObject.update();
-		
-		ShaderModelObject.position = glm::vec3(
-			my_enemy.pos.x,
-			my_enemy.pos.y,
-			my_enemy.pos.z);
-		
-		ShaderModelObject.rotation = my_enemy.rot;
-		ShaderModelObject.update();
-		my_enemy.player_model.draw();
-		
-		
-		//draw room
-		update_textures(my_mesh.texture);
-		CameraObject.update();
-		ShaderModelObject.position = {0,0,0};
-		ShaderModelObject.rotation = {0,0,0};
-		ShaderModelObject.update();
-		my_mesh.draw();
-		
-		glDisable(GL_DEPTH_TEST);
-
-		glUseProgram(ShaderObject.ShaderProgramm);
-		
-		//Update Screen
-		SDL_GL_SwapWindow(screen);
+		draw();
 	}
 	
 	//5. clean

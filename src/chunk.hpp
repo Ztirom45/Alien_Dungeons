@@ -3,15 +3,16 @@
 #define ChunkSizeZ 2+Room_H
 #define ChunkViewCount 1
 
-//data of chunks TODO
+//data of chunks
 //Uint8 chunks_data[(ChunkViewCount*2+1)*(ChunkViewCount*2+1)][ChunkSizeX][ChunkSizeY][ChunkSizeZ] = {0};
 
 class chunk{
 	public:
 		//possition of chunk in relation to the player
 		glm::vec2 c_pos = {2,2};
-		//chunk data pointer TODO
-		Uint8 chunk_data[ChunkSizeX][ChunkSizeY][ChunkSizeZ] = {};//chunks_data[(int)(c_pos.x+c_pos.y*(ChunkViewCount*2+1))];
+		//chunk data pointer 
+		Uint8 chunk_data[ChunkSizeX][ChunkSizeY][ChunkSizeZ] = {0};
+		
 		
 		void clear(){
 			for(int x=0;x<ChunkSizeX;x++){
@@ -22,6 +23,7 @@ class chunk{
 				}
 			}
 		};
+		
 		
 		void add_to_mesh(){
 			for(int x=1;x<Room_W+1;x++){
