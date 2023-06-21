@@ -122,7 +122,6 @@ void init(){
 void events(){
 		//events
 		SDL_Event event;
-		const Uint8 *keyboard_state_array = SDL_GetKeyboardState(NULL);
 		while (SDL_PollEvent(&event)) {
 			switch (event.type) {
 				case SDL_QUIT:
@@ -183,8 +182,32 @@ void Input(){
 	
 	//update position of the player and the camera
 	CameraObject.move(direction,my_player.speed);
-	
 	CameraObject.rotation.x = 70;
+	
+	//if the player left the room: update rooom pos
+	RectF Current_Rect = my_player.get_rect({CameraObject.position.x,CameraObject.position.z});
+	if(Current_Rect.y<-1){
+		CameraObject.position.z -= 2*Room_H;
+		my_game_map.pos.y -= 1;
+		printf("0\n");
+	}
+	if(Current_Rect.x<-1){
+		CameraObject.position.x -= 2*Room_H;
+		my_game_map.pos.x -= 1;
+		printf("1\n");
+	}
+	if(Current_Rect.y>Room_H*2+1){
+		CameraObject.position.z += 2*Room_H;
+		my_game_map.pos.y += 1;
+		printf("2\n");
+	}
+	if(Current_Rect.x>Room_W*2+1){
+		CameraObject.position.x += 2*Room_H;
+		my_game_map.pos.x += 1;
+		printf("3\n");
+	}
+	
+	
 }
 
 //cleanup memory (TODO)
@@ -280,12 +303,10 @@ int main(){
 	// 1. Setup graphics program 
 	init();
 	
-	// 2. Setup geometry (setup method definitely doesn't work the right way TODO)
+	// 2. Setup geometry
 	my_player.player_model.setup_mesh();
 	my_mesh.setup_mesh();
 	my_enemy.player_model.setup_mesh();
-	my_mesh.setup_mesh();
-	my_player.player_model.setup_mesh();
 	
 	//3. Create shader
 	ShaderObject.load_fs_file("src/shader.fs");

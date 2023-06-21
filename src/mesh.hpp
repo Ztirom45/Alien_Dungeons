@@ -291,15 +291,38 @@ class mesh{
 									(void*)0//offset
 			);
 			
-			
-			//unbind Vertex array
+			//unbind VAO
+			/*
 			glBindVertexArray(0);
-			glBindVertexArray(1);
-			glBindVertexArray(2);
 			//disable attrib arrays
 			glDisableVertexAttribArray(0);
 			glDisableVertexAttribArray(1);
 			glDisableVertexAttribArray(2);
+			
+			
+			//update textures(test)
+			glBindVertexArray(VertexArrayObject);
+			
+			glBindBuffer(GL_ARRAY_BUFFER,VertexBufferObject3);
+			glBufferData(GL_ARRAY_BUFFER,vertex_col.size()*sizeof(GLfloat),0,GL_DYNAMIC_DRAW);
+			glEnableVertexAttribArray(2);
+			glBufferSubData(GL_ARRAY_BUFFER, 0, vertex_col.size()*sizeof(GLfloat),vertex_col.data());
+			
+			
+			//print error if it doesn't work
+			GLint size = 0;
+			glGetBufferParameteriv(GL_ARRAY_BUFFER, GL_BUFFER_SIZE, &size);
+			if(vertex_col.size()*sizeof(GLfloat) != size)
+			{
+				glDeleteBuffers(1, &VertexBufferObject3);
+				printf("error: Updating vertex texture array failt\n");
+				return;
+			}
+			
+			glDisableVertexAttribArray(2);
+			glBindVertexArray(0);
+			*/
+
 		}
 		
 		void draw(){

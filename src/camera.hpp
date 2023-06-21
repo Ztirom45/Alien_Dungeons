@@ -77,15 +77,11 @@ class Camera{
 			
 		};
 		
-		void update_room(){
-			printf("%d\n",position.x);
-		}
 		//takes a normalised vector and a speed to move
 		void move(glm::vec3 direction,float speed){
 			position.x += direction.x*speed;
 			position.y += direction.y*speed;
 			position.z += direction.z*speed;
-			update_room();
 		};
 
 };

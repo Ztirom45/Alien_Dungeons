@@ -228,7 +228,7 @@ class enemy: public player{
 			}
 			
 			if(current_rect.x==goal.x&&current_rect.y==goal.y){
-				if(path_pos!=pf.path.size()-1){
+				if(path_pos!=(int)(pf.path.size()-1)){
 					path_pos++;
 				}
 			}

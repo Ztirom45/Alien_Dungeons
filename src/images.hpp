@@ -1,19 +1,18 @@
 void load_GL_textures(){
 	
-	if (auto dir = opendir("img")) {
-		while (auto f = readdir(dir)) {
-			if (!f->d_name || f->d_name[0] == '.')
+	if (DIR *dir = opendir("img")) {
+		while (dirent *f = readdir(dir)) {
+			if (!f || f->d_name[0] == '.')
 				continue; // skip hidden files
 			
 			//load SDL surface
-			std::string str(f->d_name);
-			str = "img/"+str;
-			SDL_Surface* surface 	= IMG_Load(str.c_str());
+			char str[64] = "img/";
+			strcat(str, f->d_name);
+			SDL_Surface* surface 	= IMG_Load(str);
 			
 			//glut image
-			GLuint texTure = 0;
-			glGenTextures(1, &texTure);
-			glBindTexture(GL_TEXTURE_2D, texTure);
+			glGenTextures(1, &textures[str]);
+			glBindTexture(GL_TEXTURE_2D, textures[str]);
 			
 			//texture settings: cord up to 0 and 1
 			glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -26,14 +25,12 @@ void load_GL_textures(){
 			//generate image
 			glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA,surface->w,surface->h,0,GL_RGBA,GL_UNSIGNED_BYTE,surface->pixels);
 			
-			//add texture to map
-			textures[str] = texTure;
-			std::cout<<"Includet image: " << str << ":\t" << &textures[str] <<"\n";
-			
 			//clear surface
 			SDL_FreeSurface(surface);
 		}
 		closedir(dir);
+	}else{//error if directory doens't exist
+		printf("error: couldn't find diretory `img`");
 	}
 	
 }
